@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('source_id')->constrained('finance_sources')->onDelete('cascade')->onUpdate('cascade');
             $table->decimal('current_balance', 15, 2)->default(0);
             $table->text('description')->nullable();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
         });
     }
