@@ -125,20 +125,16 @@ var KTUsersListDatatable = (function () {
                     data: null,
                     orderable: false,
                     render: function (data, type, row) {
-                        return `<button type="button" class="btn btn-light btn-active-light-primary btn-sm" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
+                        return `<a href="#" class="btn btn-light btn-active-light-primary btn-sm" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
                                     Actions
-                                    <span class="svg-icon svg-icon-5 m-0">
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z" fill="currentColor"/>
-                                        </svg>
-                                    </span>
-                                </button>
+                                    <i class="ki-outline ki-down fs-5 ms-1"></i>
+                                </a>
                                 <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-125px py-4" data-kt-menu="true">
                                     <div class="menu-item px-3">
-                                        <a href="javascript:void(0)" class="menu-link px-3" data-kt-users-table-filter="edit_row" data-user-id="${row.id}">Edit</a>
+                                        <a href="#" class="menu-link px-3" data-kt-users-table-filter="edit_row" data-user-id="${row.id}">Edit</a>
                                     </div>
                                     <div class="menu-item px-3">
-                                        <a href="javascript:void(0)" class="menu-link px-3" data-kt-users-table-filter="delete_row" data-user-id="${row.id}">Delete</a>
+                                        <a href="#" class="menu-link px-3" data-kt-users-table-filter="delete_row" data-user-id="${row.id}">Delete</a>
                                     </div>
                                 </div>`;
                     },
@@ -154,39 +150,79 @@ var KTUsersListDatatable = (function () {
 
             // Reinitialize KTMenu for dropdown menus in the table with a small delay
             setTimeout(function () {
+                // console.log("Initializing menus after table draw...");
+
                 if (typeof KTMenu !== "undefined") {
                     try {
+                        // First, destroy existing menu instances to avoid conflicts
+                        const existingMenus = table.querySelectorAll(
+                            '[data-kt-menu="true"][data-kt-menu-initialized="true"]'
+                        );
+                        existingMenus.forEach((menu) => {
+                            try {
+                                const instance = KTMenu.getInstance(menu);
+                                if (instance) {
+                                    instance.destroy();
+                                }
+                                menu.removeAttribute(
+                                    "data-kt-menu-initialized"
+                                );
+                            } catch (e) {
+                                // console.log("Error destroying menu:", e);
+                            }
+                        });
+
                         // Initialize all menus
                         KTMenu.init();
+                        // console.log("KTMenu.init() called successfully");
 
                         // Also try to specifically initialize table menus
                         const menus = table.querySelectorAll(
                             '[data-kt-menu="true"]'
                         );
-                        menus.forEach((menu) => {
+                        // console.log("Found menus:", menus.length);
+
+                        menus.forEach((menu, index) => {
                             try {
+                                // console.log("Initializing menu", index, menu);
                                 if (
                                     !menu.hasAttribute(
                                         "data-kt-menu-initialized"
                                     )
                                 ) {
-                                    const menuInstance =
-                                        KTMenu.getInstance(menu) ||
-                                        new KTMenu(menu);
+                                    const menuInstance = new KTMenu(menu);
                                     menu.setAttribute(
                                         "data-kt-menu-initialized",
                                         "true"
                                     );
+                                    // console.log(
+                                    //     "Menu",
+                                    //     index,
+                                    //     "initialized successfully"
+                                    // );
+                                } else {
+                                    // console.log(
+                                    //     "Menu",
+                                    //     index,
+                                    //     "already initialized"
+                                    // );
                                 }
                             } catch (e) {
-                                console.log("Menu init error:", e);
+                                console.error(
+                                    "Menu init error for menu",
+                                    index,
+                                    ":",
+                                    e
+                                );
                             }
                         });
                     } catch (e) {
-                        console.log("KTMenu init error:", e);
+                        console.error("KTMenu init error:", e);
                     }
+                } else {
+                    console.error("KTMenu is not defined");
                 }
-            }, 100);
+            }, 200);
         });
     };
 
@@ -237,11 +273,14 @@ var KTUsersListDatatable = (function () {
 
     // Handle Edit and Delete actions
     var handleRowActions = function () {
+        // console.log("Setting up row action handlers...");
+
         // Handle Delete button click
         $(table).on(
             "click",
             '[data-kt-users-table-filter="delete_row"]',
             function (e) {
+                // console.log("Delete button clicked");
                 e.preventDefault();
 
                 // Select parent row
@@ -252,6 +291,8 @@ var KTUsersListDatatable = (function () {
                     .querySelectorAll("td")[2]
                     .querySelector("a").innerText;
                 const userId = $(this).attr("data-user-id");
+
+                // console.log("User to delete:", userName, "ID:", userId);
 
                 // SweetAlert2 pop up --- official docs reference: https://sweetalert2.github.io/
                 Swal.fire({
@@ -269,7 +310,10 @@ var KTUsersListDatatable = (function () {
                     if (result.value) {
                         // Delete user via AJAX
                         $.ajax({
-                            url: window.route("setting.user.destroy") + userId,
+                            url:
+                                window.route("setting.user.destroy") +
+                                "/" +
+                                userId,
                             type: "DELETE",
                             headers: {
                                 "X-CSRF-TOKEN": $(
@@ -324,20 +368,18 @@ var KTUsersListDatatable = (function () {
             }
         );
 
-        // Handle Action dropdown button click
-        $(table).on("click", '[data-kt-menu-trigger="click"]', function (e) {
-            e.stopPropagation();
-            // Button elements don't need preventDefault, just let KTMenu handle the dropdown
-        });
+        // Handle Action dropdown button click - Remove this as KTMenu will handle it
 
         // Handle Edit button click
         $(table).on(
             "click",
             '[data-kt-users-table-filter="edit_row"]',
             function (e) {
+                // console.log("Edit button clicked");
                 e.preventDefault();
 
                 const userId = $(this).attr("data-user-id");
+                // console.log("User to edit ID:", userId);
 
                 // For now, just show alert - you can implement edit modal later
                 Swal.fire({
@@ -511,16 +553,22 @@ var KTUsersListDatatable = (function () {
     // Public methods
     return {
         init: function () {
+            // console.log("KTUsersListDatatable.init() called");
+
             // Prevent multiple initialization
             if (initialized) {
+                // console.log("Already initialized, skipping");
                 return;
             }
 
             table = document.querySelector("#kt_table_users");
 
             if (!table) {
+                // console.error("Table #kt_table_users not found");
                 return;
             }
+
+            // console.log("Table found, initializing components...");
 
             initUserTable();
             initToggleToolbar();
@@ -529,12 +577,17 @@ var KTUsersListDatatable = (function () {
 
             // Initialize KTMenu for dropdowns
             if (typeof KTMenu !== "undefined") {
+                // console.log("KTMenu available, initializing...");
                 KTMenu.init();
+            } else {
+                console.error("KTMenu not available");
             }
 
             initialized = true;
+            // console.log("KTUsersListDatatable initialization complete");
         },
         refresh: function () {
+            // console.log("Refreshing datatable...");
             if (datatable) {
                 datatable.ajax.reload();
             }
@@ -544,12 +597,27 @@ var KTUsersListDatatable = (function () {
 
 // On document ready
 KTUtil.onDOMContentLoaded(function () {
+    // console.log("DOM content loaded - KTUtil");
     KTUsersListDatatable.init();
 });
 
 // Alternative initialization if KTUtil is not available
 $(document).ready(function () {
+    // console.log("DOM ready - jQuery");
     if (typeof KTUsersListDatatable !== "undefined") {
         KTUsersListDatatable.init();
+    } else {
+        console.error("KTUsersListDatatable not defined");
+    }
+});
+
+// Additional failsafe
+window.addEventListener("load", function () {
+    // console.log("Window loaded - fallback initialization");
+    if (typeof KTUsersListDatatable !== "undefined") {
+        setTimeout(() => {
+            // console.log("Fallback initialization attempt");
+            KTUsersListDatatable.init();
+        }, 500);
     }
 });

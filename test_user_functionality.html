@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>User Management Test</title>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    </head>
+    <body>
+        <h1>User Management Functionality Test</h1>
+
+        <h2>1. Test DataTable Loading</h2>
+        <button onclick="testDataTable()">Test DataTable</button>
+        <div id="datatableResult"></div>
+
+        <h2>2. Test Create User</h2>
+        <button onclick="testCreateUser()">Test Create User</button>
+        <div id="createResult"></div>
+
+        <h2>3. Test Delete User</h2>
+        <input
+            type="number"
+            id="userIdToDelete"
+            placeholder="User ID to delete"
+        />
+        <button onclick="testDeleteUser()">Test Delete User</button>
+        <div id="deleteResult"></div>
+
+        <script>
+            const baseUrl = "http://127.0.0.1:8000";
+            const csrfToken = "test-token"; // You'll need to get this from the actual page
+
+            async function testDataTable() {
+                try {
+                    const response = await fetch(
+                        `${baseUrl}/setting/user/datatable`,
+                        {
+                            method: "GET",
+                            headers: {
+                                Accept: "application/json",
+                                "X-Requested-With": "XMLHttpRequest",
+                            },
+                        }
+                    );
+
+                    const result = await response.json();
+                    document.getElementById("datatableResult").innerHTML = `
+                    <p>Status: ${response.status}</p>
+                    <p>Data: ${JSON.stringify(result, null, 2)}</p>
+                `;
+                } catch (error) {
+                    document.getElementById(
+                        "datatableResult"
+                    ).innerHTML = `Error: ${error.message}`;
+                }
+            }
+
+            async function testCreateUser() {
+                const formData = new FormData();
+                formData.append("name", "Test User");
+                formData.append("email", "test@example.com");
+                formData.append("password", "password123");
+                formData.append("password_confirmation", "password123");
+                formData.append("roles[]", "admin");
+
+                try {
+                    const response = await fetch(`${baseUrl}/setting/user`, {
+                        method: "POST",
+                        headers: {
+                            "X-CSRF-TOKEN": csrfToken,
+                            Accept: "application/json",
+                            "X-Requested-With": "XMLHttpRequest",
+                        },
+                        body: formData,
+                    });
+
+                    const result = await response.json();
+                    document.getElementById("createResult").innerHTML = `
+                    <p>Status: ${response.status}</p>
+                    <p>Data: ${JSON.stringify(result, null, 2)}</p>
+                `;
+                } catch (error) {
+                    document.getElementById(
+                        "createResult"
+                    ).innerHTML = `Error: ${error.message}`;
+                }
+            }
+
+            async function testDeleteUser() {
+                const userId = document.getElementById("userIdToDelete").value;
+                if (!userId) {
+                    alert("Please enter a user ID");
+                    return;
+                }
+
+                try {
+                    const response = await fetch(
+                        `${baseUrl}/setting/user/${userId}`,
+                        {
+                            method: "DELETE",
+                            headers: {
+                                "X-CSRF-TOKEN": csrfToken,
+                                Accept: "application/json",
+                                "X-Requested-With": "XMLHttpRequest",
+                            },
+                        }
+                    );
+
+                    const result = await response.json();
+                    document.getElementById("deleteResult").innerHTML = `
+                    <p>Status: ${response.status}</p>
+                    <p>Data: ${JSON.stringify(result, null, 2)}</p>
+                `;
+                } catch (error) {
+                    document.getElementById(
+                        "deleteResult"
+                    ).innerHTML = `Error: ${error.message}`;
+                }
+            }
+        </script>
+    </body>
+</html>

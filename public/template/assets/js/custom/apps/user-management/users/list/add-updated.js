@@ -55,7 +55,7 @@ var KTUsersAddUser = (function () {
                         },
                     },
                 },
-                user_role: {
+                "user_role[]": {
                     validators: {
                         notEmpty: {
                             message: "Role wajib dipilih",
@@ -85,7 +85,7 @@ var KTUsersAddUser = (function () {
             // Validate form before submit
             if (validator) {
                 validator.validate().then(function (status) {
-                    console.log("validated!");
+                    // console.log("validated!");
 
                     if (status == "Valid") {
                         // Show loading indication
@@ -124,7 +124,14 @@ var KTUsersAddUser = (function () {
                                     const value = formData.get(field);
                                     formData.delete(field);
                                     const cleanKey = field.replace("user_", "");
-                                    formData.append(cleanKey, value);
+                                    if (cleanKey === "password_confirmation") {
+                                        formData.append(
+                                            "password_confirmation",
+                                            value
+                                        );
+                                    } else {
+                                        formData.append(cleanKey, value);
+                                    }
                                 }
                             });
 
@@ -156,6 +163,22 @@ var KTUsersAddUser = (function () {
                                             },
                                         }).then(function (result) {
                                             if (result.isConfirmed) {
+                                                // Reset form
+                                                form.reset();
+
+                                                // Reset validation
+                                                if (validator) {
+                                                    validator.resetForm();
+                                                }
+
+                                                // Reset Select2 dropdowns
+                                                $(form)
+                                                    .find(
+                                                        '[name="user_role[]"]'
+                                                    )
+                                                    .val(null)
+                                                    .trigger("change");
+
                                                 modal.hide();
 
                                                 // Reload datatable if it exists
@@ -235,7 +258,20 @@ var KTUsersAddUser = (function () {
                 },
             }).then(function (result) {
                 if (result.value) {
-                    form.reset(); // Reset form
+                    // Reset form
+                    form.reset();
+
+                    // Reset validation
+                    if (validator) {
+                        validator.resetForm();
+                    }
+
+                    // Reset Select2 dropdowns
+                    $(form)
+                        .find('[name="user_role[]"]')
+                        .val(null)
+                        .trigger("change");
+
                     modal.hide();
                 } else if (result.dismiss === "cancel") {
                     Swal.fire({
@@ -271,7 +307,20 @@ var KTUsersAddUser = (function () {
                 },
             }).then(function (result) {
                 if (result.value) {
-                    form.reset(); // Reset form
+                    // Reset form
+                    form.reset();
+
+                    // Reset validation
+                    if (validator) {
+                        validator.resetForm();
+                    }
+
+                    // Reset Select2 dropdowns
+                    $(form)
+                        .find('[name="user_role[]"]')
+                        .val(null)
+                        .trigger("change");
+
                     modal.hide();
                 } else if (result.dismiss === "cancel") {
                     Swal.fire({
@@ -287,6 +336,20 @@ var KTUsersAddUser = (function () {
             });
         });
     };
+
+    // Reset form when modal is hidden
+    element.addEventListener("hidden.bs.modal", function () {
+        // Reset form
+        form.reset();
+
+        // Reset validation if it exists
+        if (typeof validator !== "undefined" && validator) {
+            validator.resetForm();
+        }
+
+        // Reset Select2 dropdowns
+        $(form).find('[name="user_role[]"]').val(null).trigger("change");
+    });
 
     // Load roles on modal show
     element.addEventListener("shown.bs.modal", function () {
@@ -328,7 +391,7 @@ var KTUsersAddUser = (function () {
                     $(roleSelect).trigger("change");
                 },
                 error: function (xhr, status, error) {
-                    console.error("Error loading roles:", error);
+                    // console.error("Error loading roles:", error);
                 },
             });
         }

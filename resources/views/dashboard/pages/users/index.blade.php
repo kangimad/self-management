@@ -1489,7 +1489,7 @@
             const routes = {
                 'setting.user.datatable': '{{ route('setting.user.datatable') }}',
                 'setting.user.store': '{{ route('setting.user.store') }}',
-                'setting.user.destroy': '{{ url('setting/user') }}/',
+                'setting.user.destroy': '{{ url('setting/user') }}',
                 'setting.user.destroy.multiple': '{{ route('setting.user.destroy.multiple') }}',
                 'setting.user.export': '{{ route('setting.user.export') }}',
                 'setting.user.roles': '{{ route('setting.user.roles') }}'
@@ -1521,6 +1521,9 @@
             });
         });
     </script>
+
+    <!-- Debug Script (remove in production) -->
+    {{-- <script src="{{ asset('template/assets/js/debug-user-management.js') }}"></script> --}}
 
     <!-- Updated User Management Scripts -->
     <script src="{{ asset('template/assets/js/custom/apps/user-management/users/list/table-updated.js') }}"></script>
