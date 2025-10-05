@@ -2236,7 +2236,7 @@
                                             </tr>
                                             <tr>
                                                 <td>Role</td>
-                                                <td>{{$user->role_summary}}</td>
+                                                <td>{{ $user->role_summary }}</td>
                                                 <td class="text-end">
                                                     <button type="button"
                                                         class="btn btn-icon btn-active-light-primary w-30px h-30px ms-auto"
@@ -2745,49 +2745,50 @@
                     <!--begin::Modal body-->
                     <div class="modal-body scroll-y mx-5 mx-xl-15 my-7">
                         <!--begin::Form-->
-                        <form id="kt_modal_update_role_form" class="form" action="#" data-user-id="{{ $user->id }}">
+                        <form id="kt_modal_update_role_form" class="form" action="#"
+                            data-user-id="{{ $user->id }}">
                             <!--begin::Input group-->
-                            <div class="fv-row mb-7" data-user-roles="{{ json_encode($user->roles->pluck('id')->toArray()) }}">
+                            <div class="fv-row mb-7"
+                                data-user-roles="{{ json_encode($user->roles->pluck('id')->toArray()) }}">
                                 <label class="fs-6 fw-semibold form-label mb-5">
                                     <span class="required">Pilih Role Pengguna</span>
                                 </label>
                                 @foreach ($roles as $role)
-    <div class="d-flex flex-column mb-5">
-        <div class="form-check form-check-custom form-check-solid align-items-start">
-            <input
-                class="form-check-input me-3 mt-1 role-radio-style"
-                name="user_role[]"
-                type="checkbox"
-                id="kt_modal_update_role_option_{{ $loop->index }}"
-                value="{{ $role->id }}"
-                @checked(in_array($role->id, old('user_role', $user->roles->pluck('id')->toArray() ?? [])))
-            />
+                                    <div class="d-flex flex-column mb-5">
+                                        <div class="form-check form-check-custom form-check-solid align-items-start">
+                                            <input class="form-check-input me-3 mt-1 role-radio-style"
+                                                name="user_role[]" type="checkbox"
+                                                id="kt_modal_update_role_option_{{ $loop->index }}"
+                                                value="{{ $role->id }}" @checked(in_array($role->id, old('user_role', $user->roles->pluck('id')->toArray() ?? []))) />
 
-            <label class="form-check-label" for="kt_modal_update_role_option_{{ $loop->index }}">
-                <div class="fw-bold text-gray-800">{{ $role->name }}</div>
+                                            <label class="form-check-label"
+                                                for="kt_modal_update_role_option_{{ $loop->index }}">
+                                                <div class="fw-bold text-gray-800">{{ $role->name }}</div>
 
-                @if ($role->permissions->count())
-                    <div class="mt-2">
-                        <div class="d-flex flex-wrap gap-1">
-                            @foreach ($role->permissions as $permission)
-                                <span class="badge bg-light text-gray-700 border border-secondary fw-normal fs-8">
-                                    <i class="ki-duotone ki-check-circle fs-7 text-success me-1"></i>
-                                    {{ $permission->name }}
-                                </span>
-                            @endforeach
-                        </div>
-                    </div>
-                @else
-                    <div class="text-gray-500 small fst-italic">Tidak ada permission</div>
-                @endif
-            </label>
-        </div>
-    </div>
+                                                @if ($role->permissions->count())
+                                                    <div class="mt-2">
+                                                        <div class="d-flex flex-wrap gap-1">
+                                                            @foreach ($role->permissions as $permission)
+                                                                <span
+                                                                    class="badge bg-light text-gray-700 border border-secondary fw-normal fs-8">
+                                                                    <i
+                                                                        class="ki-duotone ki-check-circle fs-7 text-success me-1"></i>
+                                                                    {{ $permission->name }}
+                                                                </span>
+                                                            @endforeach
+                                                        </div>
+                                                    </div>
+                                                @else
+                                                    <div class="text-gray-500 small fst-italic">Tidak ada permission</div>
+                                                @endif
+                                            </label>
+                                        </div>
+                                    </div>
 
-    @if (!$loop->last)
-        <div class="separator separator-dashed my-5"></div>
-    @endif
-@endforeach
+                                    @if (!$loop->last)
+                                        <div class="separator separator-dashed my-5"></div>
+                                    @endif
+                                @endforeach
 
                             </div>
                             <!--end::Input group-->

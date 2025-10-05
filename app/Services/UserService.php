@@ -87,7 +87,7 @@ class UserService
     {
         // Validate that all role IDs exist
         $validRoles = Role::whereIn('id', $roleIds)->pluck('id')->toArray();
-        
+
         if (count($validRoles) !== count($roleIds)) {
             throw new \Exception('Satu atau lebih role tidak valid.');
         }
@@ -99,7 +99,7 @@ class UserService
 
         // Sync roles
         $user->roles()->sync($roleIds);
-        
+
         // Reload user with roles
         return $user->load('roles');
     }

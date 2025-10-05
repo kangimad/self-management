@@ -69,7 +69,8 @@ var KTUsersUpdateRole = (function () {
 
                     Swal.fire({
                         text:
-                            response.message || "Role pengguna berhasil diperbarui!",
+                            response.message ||
+                            "Role pengguna berhasil diperbarui!",
                         icon: "success",
                         buttonsStyling: false,
                         confirmButtonText: "Ok, mengerti!",
@@ -78,7 +79,7 @@ var KTUsersUpdateRole = (function () {
                         },
                     }).then(() => {
                         modal.hide();
-                        
+
                         // Reload page to update role display
                         setTimeout(() => {
                             window.location.reload();
@@ -190,8 +191,8 @@ var KTUsersUpdateRole = (function () {
         // Ambil original state dari data attribute atau server state
         const originalRoleIds = getOriginalUserRoles();
         const checkboxes = form.querySelectorAll('input[name="user_role[]"]');
-        
-        checkboxes.forEach(checkbox => {
+
+        checkboxes.forEach((checkbox) => {
             if (originalRoleIds.includes(parseInt(checkbox.value))) {
                 checkbox.checked = true;
             } else {
@@ -203,19 +204,21 @@ var KTUsersUpdateRole = (function () {
     // Helper: ambil original role user
     var getOriginalUserRoles = function () {
         // Coba ambil dari data attribute di form atau element lain
-        const roleDataElement = document.querySelector('[data-user-roles]');
+        const roleDataElement = document.querySelector("[data-user-roles]");
         if (roleDataElement) {
-            const rolesString = roleDataElement.getAttribute('data-user-roles');
+            const rolesString = roleDataElement.getAttribute("data-user-roles");
             try {
                 return JSON.parse(rolesString);
             } catch (e) {
-                console.warn('Failed to parse user roles data:', e);
+                console.warn("Failed to parse user roles data:", e);
             }
         }
 
         // Fallback: ambil dari checkbox yang checked saat page load
-        const checkedBoxes = form.querySelectorAll('input[name="user_role[]"]:checked');
-        return Array.from(checkedBoxes).map(cb => parseInt(cb.value));
+        const checkedBoxes = form.querySelectorAll(
+            'input[name="user_role[]"]:checked'
+        );
+        return Array.from(checkedBoxes).map((cb) => parseInt(cb.value));
     };
 
     // Helper: tampilkan pesan error umum
@@ -235,10 +238,11 @@ var KTUsersUpdateRole = (function () {
     var showFieldError = function (fieldName, message) {
         // Untuk role, tampilkan error di atas daftar role
         if (fieldName === "user_role") {
-            const roleContainer = form.querySelector('.fv-row');
+            const roleContainer = form.querySelector(".fv-row");
             if (roleContainer) {
                 // Hapus error lama jika ada
-                const existingError = roleContainer.querySelector(".invalid-feedback");
+                const existingError =
+                    roleContainer.querySelector(".invalid-feedback");
                 if (existingError) {
                     existingError.remove();
                 }
@@ -247,12 +251,15 @@ var KTUsersUpdateRole = (function () {
                 const errorDiv = document.createElement("div");
                 errorDiv.classList.add("invalid-feedback", "d-block");
                 errorDiv.innerText = message;
-                
-                const label = roleContainer.querySelector('label');
+
+                const label = roleContainer.querySelector("label");
                 if (label) {
-                    label.insertAdjacentElement('afterend', errorDiv);
+                    label.insertAdjacentElement("afterend", errorDiv);
                 } else {
-                    roleContainer.insertBefore(errorDiv, roleContainer.firstChild);
+                    roleContainer.insertBefore(
+                        errorDiv,
+                        roleContainer.firstChild
+                    );
                 }
 
                 // Tambah class error ke container
@@ -264,7 +271,8 @@ var KTUsersUpdateRole = (function () {
                 input.classList.add("is-invalid");
 
                 // Hapus error lama jika ada
-                const existingError = input.parentNode.querySelector(".invalid-feedback");
+                const existingError =
+                    input.parentNode.querySelector(".invalid-feedback");
                 if (existingError) {
                     existingError.remove();
                 }
