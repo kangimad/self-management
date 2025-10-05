@@ -30,10 +30,11 @@ var KTUsersListDatatable = (function () {
             // Init datatable --- more info on datatables: https://datatables.net/manual/
             datatable = $(table).DataTable({
                 info: true,
-                order: [[1, "asc"]],
+                order: [[2, "asc"]],
                 pageLength: 10,
                 columnDefs: [
                     { orderable: false, targets: 0 }, // Disable ordering on column 0 (checkbox)
+                    { orderable: false, targets: 1 }, // Disable ordering on column 0 (checkbox)
                     { orderable: false, targets: 7 }, // Disable ordering on column 7 (actions)
                 ],
                 processing: true,
@@ -113,6 +114,7 @@ var KTUsersListDatatable = (function () {
                     },
                     {
                         data: null,
+                        orderable: false,
                         render: function (data, type, row, meta) {
                             return meta.row + 1;
                         },

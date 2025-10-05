@@ -142,6 +142,18 @@ Route::middleware(['auth', 'verified'])->prefix('setting')->name('setting.')->gr
         Route::delete('/{user}', [\App\Http\Controllers\UserController::class, 'destroy'])->name('destroy');
         Route::delete('/', [\App\Http\Controllers\UserController::class, 'destroyMultiple'])->name('destroy.multiple');
     });
+    Route::prefix('role')->name('role.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\RoleController::class, 'index'])->name('index');
+        Route::post('/', [\App\Http\Controllers\RoleController::class, 'store'])->name('store');
+        Route::get('/{role}', [\App\Http\Controllers\RoleController::class, 'show'])->name('show');
+        Route::get('/{role}/users', [\App\Http\Controllers\RoleController::class, 'getUsersWithRole'])->name('users');
+        Route::get('/{role}/edit', [\App\Http\Controllers\RoleController::class, 'edit'])->name('edit');
+        Route::put('/{role}', [\App\Http\Controllers\RoleController::class, 'update'])->name('update');
+        Route::delete('/{role}', [\App\Http\Controllers\RoleController::class, 'destroy'])->name('destroy');
+        Route::delete('/', [\App\Http\Controllers\RoleController::class, 'destroyMultiple'])->name('destroy.multiple');
+        Route::post('/remove-user', [\App\Http\Controllers\RoleController::class, 'removeUser'])->name('remove.user');
+        Route::post('/remove-multiple-users', [\App\Http\Controllers\RoleController::class, 'removeMultipleUsers'])->name('remove.multiple.users');
+    });
 });
 
 require __DIR__ . '/auth.php';
