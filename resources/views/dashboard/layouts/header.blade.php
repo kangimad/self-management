@@ -111,13 +111,15 @@
                     <!--begin::Menu wrapper-->
                     @php
                         $imageUrl = auth()->user()->image_url; // misalnya accessor di model yang menghasilkan full URL
-                        $hasImage = auth()->user()->image && File::exists(public_path('storage/' .auth()->user()->image));
+                        $hasImage =
+                            auth()->user()->image && File::exists(public_path('storage/' . auth()->user()->image));
                     @endphp
                     <div class="cursor-pointer symbol symbol-35px symbol-md-40px"
                         data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-attach="parent"
                         data-kt-menu-placement="bottom-end">
                         @if ($hasImage && $imageUrl)
-                            <img src="{{ $imageUrl }}" alt="{{ auth()->user()->name }}" style="width:100%; height:100%; object-fit:contain; object-position:center;" />
+                            <img src="{{ $imageUrl }}" alt="{{ auth()->user()->name }}" class="img-fluid rounded-circle"
+                                style="object-fit:cover; object-position:center;" />
                         @else
                             <div
                                 class="symbol-label fs-3 bg-light-primary text-primary d-flex align-items-center justify-content-center">
@@ -138,7 +140,9 @@
                                         <a href="#">
                                             <div class="symbol-label">
                                                 @if ($hasImage && $imageUrl)
-                                                    <img src="{{ $imageUrl }}" alt="{{ auth()->user()->name }}" />
+                                                    <img src="{{ $imageUrl }}" alt="{{ auth()->user()->name }}"
+                                                        class="img-fluid h-100 w-100"
+                                                        style="object-fit:cover; object-position:center;" />
                                                 @else
                                                     <div
                                                         class="symbol-label fs-3 bg-light-primary text-primary d-flex align-items-center justify-content-center">
