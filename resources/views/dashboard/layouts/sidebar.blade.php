@@ -12,24 +12,108 @@
             <!--begin::Links-->
             <div class="row g-5" data-kt-buttons="true" data-kt-buttons-target="[data-kt-button]">
                 @if (request()->routeIs('dashboard*'))
+                    @can('dashboard')
+                        <!--begin::Col-->
+                        <div class="col-12">
+                            <!--begin::Link-->
+                            <a href="{{ route('dashboard.index') }}"
+                                class="btn btn-icon btn-outline btn-bg-light {{ request()->routeIs('dashboard.index') ? 'btn-light-danger' : '' }} btn-flex justify-content-start w-100 h-100 border-gray-200 p-3"
+                                data-kt-button="true">
+                                <!--begin::Icon-->
+                                <span class="me-2">
+                                    <i class="ki-outline ki-abstract-26 fs-1"></i>
+                                </span>
+                                <!--end::Icon-->
+
+                                <!--begin::Label-->
+                                <span class="fs-7 fw-bold">Summary</span>
+                                <!--end::Label-->
+                            </a>
+                            <!--end::Link-->
+                        </div>
+                        <!--end::Col-->
+                    @endcan
                 @endif
 
                 @if (request()->routeIs('finance*'))
+                    @can('finance')
+                        <!--begin::Col-->
+                        <div class="col-12">
+                            <!--begin::Link-->
+                            <a href="{{ route('finance.index') }}"
+                                class="btn btn-icon btn-outline btn-bg-light {{ request()->routeIs('finance.index') ? 'btn-light-danger' : '' }} btn-flex justify-content-start w-100 h-100 border-gray-200 p-3"
+                                data-kt-button="true">
+                                <!--begin::Icon-->
+                                <span class="me-2">
+                                    <i class="ki-outline ki-abstract-26 fs-1"></i>
+                                </span>
+                                <!--end::Icon-->
+
+                                <!--begin::Label-->
+                                <span class="fs-7 fw-bold">Summary</span>
+                                <!--end::Label-->
+                            </a>
+                            <!--end::Link-->
+                        </div>
+                        <!--end::Col-->
+                    @endcan
                 @endif
 
                 @if (request()->routeIs('task*'))
+                    @can('task')
+                        <!--begin::Col-->
+                        <div class="col-12">
+                            <!--begin::Link-->
+                            <a href="{{ route('task.index') }}"
+                                class="btn btn-icon btn-outline btn-bg-light {{ request()->routeIs('task.index') ? 'btn-light-danger' : '' }} btn-flex justify-content-start w-100 h-100 border-gray-200 p-3"
+                                data-kt-button="true">
+                                <!--begin::Icon-->
+                                <span class="me-2">
+                                    <i class="ki-outline ki-abstract-26 fs-1"></i>
+                                </span>
+                                <!--end::Icon-->
+
+                                <!--begin::Label-->
+                                <span class="fs-7 fw-bold">Summary</span>
+                                <!--end::Label-->
+                            </a>
+                            <!--end::Link-->
+                        </div>
+                        <!--end::Col-->
+                    @endcan
                 @endif
 
                 @if (request()->routeIs('event*'))
+                    @can('event')
+                        <!--begin::Col-->
+                        <div class="col-12">
+                            <!--begin::Link-->
+                            <a href="{{ route('event.index') }}"
+                                class="btn btn-icon btn-outline btn-bg-light {{ request()->routeIs('event.index') ? 'btn-light-danger' : '' }} btn-flex justify-content-start w-100 h-100 border-gray-200 p-3"
+                                data-kt-button="true">
+                                <!--begin::Icon-->
+                                <span class="me-2">
+                                    <i class="ki-outline ki-abstract-26 fs-1"></i>
+                                </span>
+                                <!--end::Icon-->
+
+                                <!--begin::Label-->
+                                <span class="fs-7 fw-bold">Summary</span>
+                                <!--end::Label-->
+                            </a>
+                            <!--end::Link-->
+                        </div>
+                        <!--end::Col-->
+                    @endcan
                 @endif
 
                 @if (request()->routeIs('setting*'))
-                @can('setting')
+                    @can('setting')
                         <!--begin::Col-->
                         <div class="col-12">
                             <!--begin::Link-->
                             <a href="{{ route('setting.index') }}"
-                                class="btn btn-icon btn-outline btn-bg-light {{ request()->routeIs('setting.index') ? 'btn-light-primary' : '' }} btn-flex justify-content-start w-100 h-100 border-gray-200 p-3"
+                                class="btn btn-icon btn-outline btn-bg-light {{ request()->routeIs('setting.index') ? 'btn-light-danger' : '' }} btn-flex justify-content-start w-100 h-100 border-gray-200 p-3"
                                 data-kt-button="true">
                                 <!--begin::Icon-->
                                 <span class="me-2">
