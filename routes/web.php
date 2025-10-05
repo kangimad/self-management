@@ -131,12 +131,14 @@ Route::middleware(['auth', 'verified'])->prefix('setting')->name('setting.')->gr
     Route::prefix('user')->name('user.')->group(function () {
         Route::get('/', [\App\Http\Controllers\UserController::class, 'index'])->name('index');
         Route::get('/datatable', [\App\Http\Controllers\UserController::class, 'datatableData'])->name('datatable');
-        Route::post('/', [\App\Http\Controllers\UserController::class, 'store'])->name('store');
-        Route::put('/{user}', [\App\Http\Controllers\UserController::class, 'update'])->name('update');
-        Route::delete('/{user}', [\App\Http\Controllers\UserController::class, 'destroy'])->name('destroy');
-        Route::delete('/', [\App\Http\Controllers\UserController::class, 'destroyMultiple'])->name('destroy.multiple');
         Route::get('/export', [\App\Http\Controllers\UserController::class, 'export'])->name('export');
         Route::get('/roles', [\App\Http\Controllers\UserController::class, 'getRoles'])->name('roles');
+        Route::post('/', [\App\Http\Controllers\UserController::class, 'store'])->name('store');
+        Route::get('/{user}', [\App\Http\Controllers\UserController::class, 'show'])->name('show');
+        Route::put('/{user}', [\App\Http\Controllers\UserController::class, 'update'])->name('update');
+        Route::patch('/{user}/detail', [\App\Http\Controllers\UserController::class, 'updateDetail'])->name('update.detail');
+        Route::delete('/{user}', [\App\Http\Controllers\UserController::class, 'destroy'])->name('destroy');
+        Route::delete('/', [\App\Http\Controllers\UserController::class, 'destroyMultiple'])->name('destroy.multiple');
     });
 });
 

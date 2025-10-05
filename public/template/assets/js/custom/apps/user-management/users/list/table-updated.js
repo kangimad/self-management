@@ -4,74 +4,127 @@
 var KTUsersListDatatable = (function () {
     // Shared variables
     var datatable;
-    var filterMonth;
-    var filterPayment;
     var table;
     var initialized = false;
 
     // Private functions
     var initUserTable = function () {
+        // console.log("Initializing DataTable...");
+
+        // Check if route helper is available
+        if (typeof window.route !== "function") {
+            console.error("Route helper function not available");
+            return;
+        }
+
         // Check if DataTable is already initialized
         if ($.fn.DataTable.isDataTable(table)) {
-            // Destroy existing DataTable first
+            // console.log("DataTable already initialized, destroying first...");
             $(table).DataTable().destroy();
         }
 
         // Skip date ordering for server-side processing
         // The server will handle date formatting and ordering
 
-        // Init datatable --- more info on datatables: https://datatables.net/manual/
-        datatable = $(table).DataTable({
-            info: true,
-            order: [[1, "asc"]],
-            pageLength: 10,
-            columnDefs: [
-                { orderable: false, targets: 0 }, // Disable ordering on column 0 (checkbox)
-                { orderable: false, targets: 7 }, // Disable ordering on column 7 (actions)
-            ],
-            processing: true,
-            serverSide: true,
-            ajax: {
-                url: window.route("setting.user.datatable"),
-                type: "GET",
-                data: function (d) {
-                    // Add search parameters
-                    d.search = $('[data-kt-user-table-filter="search"]').val();
-                    d.role = $('[data-kt-user-table-filter="role"]').val();
-                    d.status = $('[data-kt-user-table-filter="status"]').val();
-                    d.verified = $(
-                        '[data-kt-user-table-filter="verified"]'
-                    ).val();
-                    return d;
+        try {
+            // Init datatable --- more info on datatables: https://datatables.net/manual/
+            datatable = $(table).DataTable({
+                info: true,
+                order: [[1, "asc"]],
+                pageLength: 10,
+                columnDefs: [
+                    { orderable: false, targets: 0 }, // Disable ordering on column 0 (checkbox)
+                    { orderable: false, targets: 7 }, // Disable ordering on column 7 (actions)
+                ],
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: window.route("setting.user.datatable"),
+                    type: "GET",
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
+                            "content"
+                        ),
+                        "X-Requested-With": "XMLHttpRequest",
+                        Accept: "application/json",
+                    },
+                    data: function (d) {
+                        // Add search parameters
+                        d.search = $(
+                            '[data-kt-user-table-filter="search"]'
+                        ).val();
+                        d.role = $('[data-kt-user-table-filter="role"]').val();
+                        d.status = $(
+                            '[data-kt-user-table-filter="status"]'
+                        ).val();
+                        d.verified = $(
+                            '[data-kt-user-table-filter="verified"]'
+                        ).val();
+                        return d;
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("DataTable AJAX Error:", {
+                            status: xhr.status,
+                            statusText: xhr.statusText,
+                            responseText: xhr.responseText,
+                            error: error,
+                        });
+
+                        // Handle specific error cases
+                        if (xhr.status === 401) {
+                            console.error(
+                                "Authentication required. Redirecting to login..."
+                            );
+                            window.location.href = "/login";
+                        } else if (xhr.status === 403) {
+                            console.error("Access forbidden");
+                            Swal.fire({
+                                text: "You don't have permission to access this resource.",
+                                icon: "error",
+                                buttonsStyling: false,
+                                confirmButtonText: "Ok, got it!",
+                                customClass: {
+                                    confirmButton: "btn fw-bold btn-primary",
+                                },
+                            });
+                        } else if (xhr.status >= 500) {
+                            console.error("Server error");
+                            Swal.fire({
+                                text: "Server error occurred. Please try again later.",
+                                icon: "error",
+                                buttonsStyling: false,
+                                confirmButtonText: "Ok, got it!",
+                                customClass: {
+                                    confirmButton: "btn fw-bold btn-primary",
+                                },
+                            });
+                        }
+                    },
                 },
-                error: function (xhr, status, error) {
-                    console.error("DataTable AJAX Error:", xhr.responseText);
-                },
-            },
-            columns: [
-                {
-                    data: null,
-                    orderable: false,
-                    render: function (data, type, row) {
-                        return `<div class="form-check form-check-sm form-check-custom form-check-solid">
+                columns: [
+                    {
+                        data: null,
+                        orderable: false,
+                        render: function (data, type, row) {
+                            return `<div class="form-check form-check-sm form-check-custom form-check-solid">
                                     <input class="form-check-input" type="checkbox" value="${row.id}" />
                                 </div>`;
+                        },
                     },
-                },
-                {
-                    data: null,
-                    render: function (data, type, row, meta) {
-                        return meta.row + 1;
+                    {
+                        data: null,
+                        render: function (data, type, row, meta) {
+                            return meta.row + 1;
+                        },
                     },
-                },
-                {
-                    data: "name",
-                    render: function (data, type, row) {
-                        const imageContent = row.image_url
-                            ? `<img src="${row.image_url}" alt="${data}" />`
-                            : `<div class="symbol-label fs-3 bg-light-primary text-primary">${row.initials}</div>`;
+                    {
+                        data: "name",
+                        render: function (data, type, row) {
+                            const imageContent = row.image_url
+                                ? `<img src="${row.image_url}" alt="${data}" />`
+                                : `<div class="symbol-label fs-3 bg-light-primary text-primary">${row.initials}</div>`;
 
-                        return `<div class="d-flex align-items-center">
+                            return `<div class="d-flex align-items-center">
                                     <div class="symbol symbol-circle symbol-50px overflow-hidden me-3">
                                         <a href="#">
                                             <div class="symbol-label">
@@ -84,48 +137,48 @@ var KTUsersListDatatable = (function () {
                                         <span class="text-muted">${row.email}</span>
                                     </div>
                                 </div>`;
+                        },
                     },
-                },
-                {
-                    data: "roles",
-                    render: function (data, type, row) {
-                        if (!data)
-                            return '<span class="badge badge-light-secondary">No Role</span>';
-                        return `<span class="badge badge-light-primary">${data}</span>`;
+                    {
+                        data: "roles",
+                        render: function (data, type, row) {
+                            if (!data)
+                                return '<span class="badge badge-light-secondary">No Role</span>';
+                            return `<span class="badge badge-light-primary">${data}</span>`;
+                        },
                     },
-                },
-                {
-                    data: "login_status",
-                    render: function (data, type, row) {
-                        if (row.is_online) {
-                            return `<div class="badge badge-light-success">Online</div>`;
-                        } else {
-                            return `<div class="badge badge-light-secondary">${data}</div>`;
-                        }
+                    {
+                        data: "login_status",
+                        render: function (data, type, row) {
+                            if (row.is_online) {
+                                return `<div class="badge badge-light-success"><i class="ki-outline ki-check-circle fs-5 text-success me-2"></i> Online</div>`;
+                            } else {
+                                return `<div class="badge badge-light-warning">${data}</div>`;
+                            }
+                        },
                     },
-                },
-                {
-                    data: "verified",
-                    render: function (data, type, row) {
-                        if (data) {
-                            return `<div class="badge badge-light-success">Verified</div>`;
-                        } else {
-                            return `<div class="badge badge-light-warning">Unverified</div>`;
-                        }
+                    {
+                        data: "verified",
+                        render: function (data, type, row) {
+                            if (data) {
+                                return `<div class="badge badge-light-success"><i class="ki-outline ki-double-check-circle fs-5 text-success me-2"></i> Verified</div>`;
+                            } else {
+                                return `<div class="badge badge-light-danger">Unverified</div>`;
+                            }
+                        },
                     },
-                },
-                {
-                    data: "created_at",
-                    render: function (data, type, row) {
-                        return `<div class="text-gray-900 fw-bold">${data}</div>
-                                <div class="text-muted fs-7">${row.created_at_formatted}</div>`;
+                    {
+                        data: "created_at",
+                        render: function (data, type, row) {
+                            return `<div class="text-gray-800 small">${data}</div>
+                                <div class="text-muted small">${row.created_at_formatted}</div>`;
+                        },
                     },
-                },
-                {
-                    data: null,
-                    orderable: false,
-                    render: function (data, type, row) {
-                        return `<a href="#" class="btn btn-light btn-active-light-primary btn-sm" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
+                    {
+                        data: null,
+                        orderable: false,
+                        render: function (data, type, row) {
+                            return `<a href="#" class="btn btn-light btn-active-light-primary btn-sm" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
                                     Actions
                                     <i class="ki-outline ki-down fs-5 ms-1"></i>
                                 </a>
@@ -137,93 +190,105 @@ var KTUsersListDatatable = (function () {
                                         <a href="#" class="menu-link px-3" data-kt-users-table-filter="delete_row" data-user-id="${row.id}">Delete</a>
                                     </div>
                                 </div>`;
+                        },
                     },
-                },
-            ],
-        });
+                ],
+            });
 
-        // Re-init functions on every table re-draw -- more info: https://datatables.net/reference/event/draw
-        datatable.on("draw", function () {
-            initToggleToolbar();
-            handleRowActions();
-            toggleToolbars();
+            // Re-init functions on every table re-draw -- more info: https://datatables.net/reference/event/draw
+            datatable.on("draw", function () {
+                initToggleToolbar();
+                handleRowActions();
+                toggleToolbars();
 
-            // Reinitialize KTMenu for dropdown menus in the table with a small delay
-            setTimeout(function () {
-                // console.log("Initializing menus after table draw...");
+                // Reinitialize KTMenu for dropdown menus in the table with a small delay
+                setTimeout(function () {
+                    // console.log("Initializing menus after table draw...");
 
-                if (typeof KTMenu !== "undefined") {
-                    try {
-                        // First, destroy existing menu instances to avoid conflicts
-                        const existingMenus = table.querySelectorAll(
-                            '[data-kt-menu="true"][data-kt-menu-initialized="true"]'
-                        );
-                        existingMenus.forEach((menu) => {
-                            try {
-                                const instance = KTMenu.getInstance(menu);
-                                if (instance) {
-                                    instance.destroy();
-                                }
-                                menu.removeAttribute(
-                                    "data-kt-menu-initialized"
-                                );
-                            } catch (e) {
-                                // console.log("Error destroying menu:", e);
-                            }
-                        });
-
-                        // Initialize all menus
-                        KTMenu.init();
-                        // console.log("KTMenu.init() called successfully");
-
-                        // Also try to specifically initialize table menus
-                        const menus = table.querySelectorAll(
-                            '[data-kt-menu="true"]'
-                        );
-                        // console.log("Found menus:", menus.length);
-
-                        menus.forEach((menu, index) => {
-                            try {
-                                // console.log("Initializing menu", index, menu);
-                                if (
-                                    !menu.hasAttribute(
+                    if (typeof KTMenu !== "undefined") {
+                        try {
+                            // First, destroy existing menu instances to avoid conflicts
+                            const existingMenus = table.querySelectorAll(
+                                '[data-kt-menu="true"][data-kt-menu-initialized="true"]'
+                            );
+                            existingMenus.forEach((menu) => {
+                                try {
+                                    const instance = KTMenu.getInstance(menu);
+                                    if (instance) {
+                                        instance.destroy();
+                                    }
+                                    menu.removeAttribute(
                                         "data-kt-menu-initialized"
-                                    )
-                                ) {
-                                    const menuInstance = new KTMenu(menu);
-                                    menu.setAttribute(
-                                        "data-kt-menu-initialized",
-                                        "true"
                                     );
-                                    // console.log(
-                                    //     "Menu",
-                                    //     index,
-                                    //     "initialized successfully"
-                                    // );
-                                } else {
-                                    // console.log(
-                                    //     "Menu",
-                                    //     index,
-                                    //     "already initialized"
-                                    // );
+                                } catch (e) {
+                                    // console.log("Error destroying menu:", e);
                                 }
-                            } catch (e) {
-                                console.error(
-                                    "Menu init error for menu",
-                                    index,
-                                    ":",
-                                    e
-                                );
-                            }
-                        });
-                    } catch (e) {
-                        console.error("KTMenu init error:", e);
+                            });
+
+                            // Initialize all menus
+                            KTMenu.init();
+                            // console.log("KTMenu.init() called successfully");
+
+                            // Also try to specifically initialize table menus
+                            const menus = table.querySelectorAll(
+                                '[data-kt-menu="true"]'
+                            );
+                            // console.log("Found menus:", menus.length);
+
+                            menus.forEach((menu, index) => {
+                                try {
+                                    // console.log("Initializing menu", index, menu);
+                                    if (
+                                        !menu.hasAttribute(
+                                            "data-kt-menu-initialized"
+                                        )
+                                    ) {
+                                        const menuInstance = new KTMenu(menu);
+                                        menu.setAttribute(
+                                            "data-kt-menu-initialized",
+                                            "true"
+                                        );
+                                        // console.log(
+                                        //     "Menu",
+                                        //     index,
+                                        //     "initialized successfully"
+                                        // );
+                                    } else {
+                                        // console.log(
+                                        //     "Menu",
+                                        //     index,
+                                        //     "already initialized"
+                                        // );
+                                    }
+                                } catch (e) {
+                                    console.error(
+                                        "Menu init error for menu",
+                                        index,
+                                        ":",
+                                        e
+                                    );
+                                }
+                            });
+                        } catch (e) {
+                            console.error("KTMenu init error:", e);
+                        }
+                    } else {
+                        console.error("KTMenu is not defined");
                     }
-                } else {
-                    console.error("KTMenu is not defined");
-                }
-            }, 200);
-        });
+                }, 200);
+            });
+        } catch (error) {
+            console.error("Error initializing DataTable:", error);
+            Swal.fire({
+                text: "Error initializing data table. Please refresh the page.",
+                icon: "error",
+                buttonsStyling: false,
+                confirmButtonText: "Ok, got it!",
+                customClass: {
+                    confirmButton: "btn fw-bold btn-primary",
+                },
+            });
+        }
     };
 
     // Search Datatable --- official docs reference: https://datatables.net/reference/api/search()
@@ -296,12 +361,15 @@ var KTUsersListDatatable = (function () {
 
                 // SweetAlert2 pop up --- official docs reference: https://sweetalert2.github.io/
                 Swal.fire({
-                    text: "Are you sure you want to delete " + userName + "?",
+                    text:
+                        "Yakin hendak menghapus pengguna dengan nama " +
+                        userName +
+                        "?",
                     icon: "warning",
                     showCancelButton: true,
                     buttonsStyling: false,
-                    confirmButtonText: "Yes, delete!",
-                    cancelButtonText: "No, cancel",
+                    confirmButtonText: "Ya, hapus!",
+                    cancelButtonText: "Tidak, batalkan",
                     customClass: {
                         confirmButton: "btn fw-bold btn-danger",
                         cancelButton: "btn fw-bold btn-active-light-primary",
@@ -381,19 +449,18 @@ var KTUsersListDatatable = (function () {
                 const userId = $(this).attr("data-user-id");
                 // console.log("User to edit ID:", userId);
 
+                window.location.href = "setting/user/" + userId;
+
                 // For now, just show alert - you can implement edit modal later
-                Swal.fire({
-                    text:
-                        "Edit functionality for user ID: " +
-                        userId +
-                        " - Coming soon!",
-                    icon: "info",
-                    buttonsStyling: false,
-                    confirmButtonText: "Ok, got it!",
-                    customClass: {
-                        confirmButton: "btn fw-bold btn-primary",
-                    },
-                });
+                // Swal.fire({
+                //     text: "Fitur dalam tahap pengembangan!",
+                //     icon: "info",
+                //     buttonsStyling: false,
+                //     confirmButtonText: "Ok, mengerti!",
+                //     customClass: {
+                //         confirmButton: "btn fw-bold btn-primary",
+                //     },
+                // });
             }
         );
     };

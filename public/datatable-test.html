@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>DataTable Test</title>
+        <meta name="csrf-token" content="{{ csrf_token() }}" />
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+        <link
+            rel="stylesheet"
+            href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css"
+        />
+    </head>
+    <body>
+        <h1>DataTable Test</h1>
+
+        <table id="test-table" class="display" style="width: 100%">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <script>
+            $(document).ready(function () {
+                console.log("Starting DataTable test...");
+
+                // Test 1: Simple DataTable without server-side processing
+                console.log("Test 1: Simple DataTable");
+                $("#test-table").DataTable({
+                    data: [
+                        { id: 1, name: "Test User", email: "test@example.com" },
+                        {
+                            id: 2,
+                            name: "Another User",
+                            email: "another@example.com",
+                        },
+                    ],
+                    columns: [
+                        { data: "id" },
+                        { data: "name" },
+                        { data: "email" },
+                        {
+                            data: null,
+                            render: function (data, type, row) {
+                                return (
+                                    "<button onclick=\"alert('Edit user: " +
+                                    row.name +
+                                    "')\">Edit</button>"
+                                );
+                            },
+                        },
+                    ],
+                });
+
+                // Test 2: AJAX endpoint test
+                console.log("Test 2: Testing AJAX endpoint");
+                setTimeout(function () {
+                    $.ajax({
+                        url: '{{ route("setting.user.datatable") }}',
+                        type: "GET",
+                        headers: {
+                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
+                                "content"
+                            ),
+                            "X-Requested-With": "XMLHttpRequest",
+                            Accept: "application/json",
+                        },
+                        data: {
+                            draw: 1,
+                            start: 0,
+                            length: 10,
+                        },
+                        success: function (response) {
+                            console.log("✓ AJAX Success:", response);
+
+                            // Test 3: Server-side DataTable
+                            console.log("Test 3: Server-side DataTable");
+                            $("#test-table").DataTable().destroy();
+                            $("#test-table").DataTable({
+                                processing: true,
+                                serverSide: true,
+                                ajax: {
+                                    url: '{{ route("setting.user.datatable") }}',
+                                    type: "GET",
+                                    headers: {
+                                        "X-CSRF-TOKEN": $(
+                                            'meta[name="csrf-token"]'
+                                        ).attr("content"),
+                                        "X-Requested-With": "XMLHttpRequest",
+                                        Accept: "application/json",
+                                    },
+                                },
+                                columns: [
+                                    { data: "id" },
+                                    { data: "name" },
+                                    { data: "email" },
+                                    {
+                                        data: null,
+                                        render: function (data, type, row) {
+                                            return (
+                                                "<button onclick=\"alert('Edit user: " +
+                                                row.name +
+                                                "')\">Edit</button>"
+                                            );
+                                        },
+                                    },
+                                ],
+                            });
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("✗ AJAX Error:", {
+                                status: xhr.status,
+                                statusText: xhr.statusText,
+                                responseText: xhr.responseText,
+                                error: error,
+                            });
+
+                            if (xhr.status === 401) {
+                                console.error(
+                                    "Authentication required - need to login first"
+                                );
+                                alert("Please login first to access this page");
+                            }
+                        },
+                    });
+                }, 2000);
+            });
+        </script>
+    </body>
+</html>

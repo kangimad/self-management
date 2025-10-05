@@ -21,6 +21,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'email_verified_at',
         'password',
         'image',
         'last_login_at',
@@ -84,10 +85,10 @@ class User extends Authenticatable
         }
 
         if ($this->last_login_at) {
-            return 'Last seen ' . $this->last_login_at->diffForHumans();
+            return $this->last_login_at->diffForHumans();
         }
 
-        return 'Never logged in';
+        return 'Belum pernah login';
     }
 
     /**
@@ -99,8 +100,8 @@ class User extends Authenticatable
             'status' => $this->login_status,
             'is_online' => $this->is_currently_online,
             'last_login' => $this->last_login_at,
-            'last_login_formatted' => $this->last_login_at ? $this->last_login_at->format('M d, Y H:i') : 'Never',
-            'last_login_human' => $this->last_login_at ? $this->last_login_at->diffForHumans() : 'Never',
+            'last_login_formatted' => $this->last_login_at ? $this->last_login_at->format('M d, Y H:i') : 'Belum Pernah',
+            'last_login_human' => $this->last_login_at ? $this->last_login_at->diffForHumans() : 'Belum Pernah',
             'ip_address' => $this->last_login_ip,
         ];
     }

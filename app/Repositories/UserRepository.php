@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Hash;
@@ -77,6 +78,7 @@ class UserRepository
             'name' => $data['user_name'] ?? $data['name'],
             'email' => $data['user_email'] ?? $data['email'],
             'password' => Hash::make($data['user_password'] ?? $data['password']),
+            'email_verified_at' => Carbon::now()->format('Y-m-d H:i:s'),
         ];
 
         // Handle image upload

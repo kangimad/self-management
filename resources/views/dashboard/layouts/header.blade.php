@@ -109,11 +109,21 @@
                 <!--begin::User menu-->
                 <div class="app-navbar-item ms-3 ms-lg-5" id="kt_header_user_menu_toggle">
                     <!--begin::Menu wrapper-->
+                    @php
+                        $imageUrl = auth()->user()->image_url; // misalnya accessor di model yang menghasilkan full URL
+                        $hasImage = auth()->user()->image && File::exists(public_path('storage/' .auth()->user()->image));
+                    @endphp
                     <div class="cursor-pointer symbol symbol-35px symbol-md-40px"
                         data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-attach="parent"
                         data-kt-menu-placement="bottom-end">
-                        <img class="symbol symbol-circle symbol-35px symbol-md-40px"
-                            src="{{ asset('template/assets/media/avatars/blank.png') }}" alt="user" />
+                        @if ($hasImage && $imageUrl)
+                            <img src="{{ $imageUrl }}" alt="{{ auth()->user()->name }}" style="width:100%; height:100%; object-fit:contain; object-position:center;" />
+                        @else
+                            <div
+                                class="symbol-label fs-3 bg-light-primary text-primary d-flex align-items-center justify-content-center">
+                                {{ auth()->user()->initials }}
+                            </div>
+                        @endif
                     </div>
                     <!--begin::User account menu-->
                     <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg menu-state-color fw-semibold py-4 fs-6 w-275px"
@@ -123,8 +133,21 @@
                             <div class="menu-content d-flex align-items-center px-3">
                                 <!--begin::Avatar-->
                                 <div class="symbol symbol-50px me-5">
-                                    <img alt="Logo"
-                                        src="{{ asset('template/assets/media/avatars/blank.png') }}" />
+
+                                    <div class="symbol symbol-circle symbol-50px overflow-hidden me-3">
+                                        <a href="#">
+                                            <div class="symbol-label">
+                                                @if ($hasImage && $imageUrl)
+                                                    <img src="{{ $imageUrl }}" alt="{{ auth()->user()->name }}" />
+                                                @else
+                                                    <div
+                                                        class="symbol-label fs-3 bg-light-primary text-primary d-flex align-items-center justify-content-center">
+                                                        {{ auth()->user()->initials }}
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        </a>
+                                    </div>
                                 </div>
                                 <!--end::Avatar-->
                                 <!--begin::Username-->

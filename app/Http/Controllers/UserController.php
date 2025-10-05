@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UserStoreRequest;
 use App\Http\Requests\UserUpdateRequest;
+use App\Http\Requests\UserUpdateDetailRequest;
 use App\Services\UserService;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -154,6 +155,27 @@ class UserController extends Controller
     }
 
     /**
+     * Update user details (name, email, image only)
+     */
+    public function updateDetail(UserUpdateDetailRequest $request, User $user): JsonResponse
+    {
+        try {
+            $updatedUser = $this->userService->updateUser($user, $request->validated());
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Detail pengguna berhasil diperbarui.',
+                'data' => $updatedUser
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memperbarui detail pengguna: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
      * Remove the specified user
      */
     public function destroy(User $user): JsonResponse
@@ -235,7 +257,27 @@ class UserController extends Controller
      */
     public function show(User $user): View
     {
-        return view('user.show', compact('user'));
+        $metadata = [
+            'title' => 'Pengguna',
+            'desc' => 'Halaman yang berisi detail pengguna aplikasi.',
+            'bread1' => '<i class="ki-outline ki-home text-gray-700 fs-6"></i>',
+            'bread1_link' => route('dashboard'),
+            'bread2' => 'Dashboard',
+            'bread2_link' => route('dashboard'),
+            'bread3' => 'Pengguna',
+            'bread3_link' => route('setting.user.index'),
+            'bread4' => $user->name,
+            'bread4_link' => '',
+            'bread5' => '',
+            'bread5_link' => '',
+            'page' => 'Detail',
+        ];
+
+        $roles = $this->userService->getAvailableRoles();
+
+        // For non-AJAX requests, we don't need the result data anymore
+        // since DataTable will load data via AJAX
+        return view('dashboard.pages.users.show', compact('metadata', 'roles', 'user'));
     }
 
     /**

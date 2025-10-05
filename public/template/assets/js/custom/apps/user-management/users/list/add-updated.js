@@ -58,7 +58,7 @@ var KTUsersAddUser = (function () {
                 "user_role[]": {
                     validators: {
                         notEmpty: {
-                            message: "Role wajib dipilih",
+                            message: "Peran wajib dipilih",
                         },
                     },
                 },
@@ -246,12 +246,12 @@ var KTUsersAddUser = (function () {
             e.preventDefault();
 
             Swal.fire({
-                text: "Are you sure you would like to cancel?",
+                text: "Apakah Anda yakin ingin membatalkan?",
                 icon: "warning",
                 showCancelButton: true,
                 buttonsStyling: false,
-                confirmButtonText: "Yes, cancel it!",
-                cancelButtonText: "No, return",
+                confirmButtonText: "Ya, batalkan!",
+                cancelButtonText: "Tidak, kembali",
                 customClass: {
                     confirmButton: "btn btn-primary",
                     cancelButton: "btn btn-active-light",
@@ -275,10 +275,10 @@ var KTUsersAddUser = (function () {
                     modal.hide();
                 } else if (result.dismiss === "cancel") {
                     Swal.fire({
-                        text: "Your form has not been cancelled!.",
+                        text: "Form Anda tidak dibatalkan!.",
                         icon: "error",
                         buttonsStyling: false,
-                        confirmButtonText: "Ok, got it!",
+                        confirmButtonText: "Ok, mengerti!",
                         customClass: {
                             confirmButton: "btn btn-primary",
                         },
