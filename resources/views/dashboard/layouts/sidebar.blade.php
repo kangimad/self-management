@@ -16,8 +16,8 @@
                         <!--begin::Col-->
                         <div class="col-12">
                             <!--begin::Link-->
-                            <a href="{{ route('dashboard.index') }}"
-                                class="btn btn-icon btn-outline btn-bg-light {{ request()->routeIs('dashboard.index') ? 'btn-light-danger' : '' }} btn-flex justify-content-start w-100 h-100 border-gray-200 p-3"
+                            <a href="{{ route('dashboard') }}"
+                                class="btn btn-icon btn-outline btn-bg-light {{ request()->routeIs('dashboard') ? 'btn-light-danger' : '' }} btn-flex justify-content-start w-100 h-100 border-gray-200 p-3"
                                 data-kt-button="true">
                                 <!--begin::Icon-->
                                 <span class="me-2">
