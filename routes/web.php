@@ -154,6 +154,17 @@ Route::middleware(['auth', 'verified'])->prefix('setting')->name('setting.')->gr
         Route::post('/remove-user', [\App\Http\Controllers\RoleController::class, 'removeUser'])->name('remove.user');
         Route::post('/remove-multiple-users', [\App\Http\Controllers\RoleController::class, 'removeMultipleUsers'])->name('remove.multiple.users');
     });
+    Route::prefix('permission')->name('permission.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\PermissionController::class, 'index'])->name('index');
+        Route::get('/datatable', [\App\Http\Controllers\PermissionController::class, 'datatableData'])->name('datatable');
+        Route::post('/', [\App\Http\Controllers\PermissionController::class, 'store'])->name('store');
+        Route::get('/{permission}', [\App\Http\Controllers\PermissionController::class, 'show'])->name('show');
+        Route::put('/{permission}', [\App\Http\Controllers\PermissionController::class, 'update'])->name('update');
+        Route::delete('/{permission}', [\App\Http\Controllers\PermissionController::class, 'destroy'])->name('destroy');
+        Route::delete('/', [\App\Http\Controllers\PermissionController::class, 'destroyMultiple'])->name('destroy.multiple');
+        Route::get('/search', [\App\Http\Controllers\PermissionController::class, 'search'])->name('search');
+        Route::get('/stats', [\App\Http\Controllers\PermissionController::class, 'stats'])->name('stats');
+    });
 });
 
 require __DIR__ . '/auth.php';

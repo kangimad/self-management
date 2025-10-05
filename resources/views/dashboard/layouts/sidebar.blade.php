@@ -11,49 +11,85 @@
             data-kt-scroll-offset="{default: '10px', lg: '40px'}">
             <!--begin::Links-->
             <div class="row g-5" data-kt-buttons="true" data-kt-buttons-target="[data-kt-button]">
-                @can('user-list')
-                    <!--begin::Col-->
-                    <div class="col-12">
-                        <!--begin::Link-->
-                        <a href="{{ route('setting.user.index') }}"
-                            class="btn btn-icon btn-outline btn-bg-light {{ request()->routeIs('setting.user*') ? 'btn-light-primary' : '' }} btn-flex justify-content-start w-100 h-100 border-gray-200 p-3"
-                            data-kt-button="true">
-                            <!--begin::Icon-->
-                            <span class="me-2">
-                                <i class="ki-outline ki-user fs-1"></i>
-                            </span>
-                            <!--end::Icon-->
+                @if (request()->routeIs('dashboard*'))
+                @endif
 
-                            <!--begin::Label-->
-                            <span class="fs-7 fw-bold">Pengguna</span>
-                            <!--end::Label-->
-                        </a>
-                        <!--end::Link-->
-                    </div>
-                    <!--end::Col-->
-                @endcan
+                @if (request()->routeIs('finance*'))
+                @endif
 
-                @can('role-list')
-                    <!--begin::Col-->
-                    <div class="col-12">
-                        <!--begin::Link-->
-                        <a href="{{ route('setting.role.index') }}"
-                            class="btn btn-icon btn-outline btn-bg-light {{ request()->routeIs('setting.role*') ? 'btn-light-primary' : '' }} btn-flex justify-content-start w-100 h-100 border-gray-200 p-3"
-                            data-kt-button="true">
-                            <!--begin::Icon-->
-                            <span class="me-2">
-                                <i class="ki-outline ki-shield-tick fs-1"></i>
-                            </span>
-                            <!--end::Icon-->
+                @if (request()->routeIs('task*'))
+                @endif
 
-                            <!--begin::Label-->
-                            <span class="fs-7 fw-bold">Peran</span>
-                            <!--end::Label-->
-                        </a>
-                        <!--end::Link-->
-                    </div>
-                    <!--end::Col-->
-                @endcan
+                @if (request()->routeIs('event*'))
+                @endif
+
+                @if (request()->routeIs('setting*'))
+                    @can('user-list')
+                        <!--begin::Col-->
+                        <div class="col-12">
+                            <!--begin::Link-->
+                            <a href="{{ route('setting.user.index') }}"
+                                class="btn btn-icon btn-outline btn-bg-light {{ request()->routeIs('setting.user*') ? 'btn-light-primary' : '' }} btn-flex justify-content-start w-100 h-100 border-gray-200 p-3"
+                                data-kt-button="true">
+                                <!--begin::Icon-->
+                                <span class="me-2">
+                                    <i class="ki-outline ki-user fs-1"></i>
+                                </span>
+                                <!--end::Icon-->
+
+                                <!--begin::Label-->
+                                <span class="fs-7 fw-bold">Pengguna</span>
+                                <!--end::Label-->
+                            </a>
+                            <!--end::Link-->
+                        </div>
+                        <!--end::Col-->
+                    @endcan
+
+                    @can('role-list')
+                        <!--begin::Col-->
+                        <div class="col-12">
+                            <!--begin::Link-->
+                            <a href="{{ route('setting.role.index') }}"
+                                class="btn btn-icon btn-outline btn-bg-light {{ request()->routeIs('setting.role*') ? 'btn-light-primary' : '' }} btn-flex justify-content-start w-100 h-100 border-gray-200 p-3"
+                                data-kt-button="true">
+                                <!--begin::Icon-->
+                                <span class="me-2">
+                                    <i class="ki-outline ki-shield-tick fs-1"></i>
+                                </span>
+                                <!--end::Icon-->
+
+                                <!--begin::Label-->
+                                <span class="fs-7 fw-bold">Role</span>
+                                <!--end::Label-->
+                            </a>
+                            <!--end::Link-->
+                        </div>
+                        <!--end::Col-->
+                    @endcan
+
+                    @can('permission-list')
+                        <!--begin::Col-->
+                        <div class="col-12">
+                            <!--begin::Link-->
+                            <a href="{{ route('setting.permission.index') }}"
+                                class="btn btn-icon btn-outline btn-bg-light {{ request()->routeIs('setting.permission*') ? 'btn-light-primary' : '' }} btn-flex justify-content-start w-100 h-100 border-gray-200 p-3"
+                                data-kt-button="true">
+                                <!--begin::Icon-->
+                                <span class="me-2">
+                                    <i class="ki-outline ki-key fs-1"></i>
+                                </span>
+                                <!--end::Icon-->
+
+                                <!--begin::Label-->
+                                <span class="fs-7 fw-bold">Permission</span>
+                                <!--end::Label-->
+                            </a>
+                            <!--end::Link-->
+                        </div>
+                        <!--end::Col-->
+                    @endcan
+                @endif
             </div> <!--end::Links-->
         </div>
         <!--end::Nav wrapper-->

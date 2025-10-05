@@ -37,13 +37,13 @@ class RoleController extends Controller
         }
 
         $metadata = [
-            'title' => 'Peran',
-            'desc' => 'Halaman yang berisi daftar peran aplikasi.',
+            'title' => 'Role',
+            'desc' => 'Halaman yang berisi daftar role aplikasi.',
             'bread1' => '<i class="ki-outline ki-home text-gray-700 fs-6"></i>',
             'bread1_link' => route('dashboard'),
             'bread2' => 'Dashboard',
             'bread2_link' => route('dashboard'),
-            'bread3' => 'Peran',
+            'bread3' => 'Role',
             'bread3_link' => route('setting.role.index'),
             'bread4' => '',
             'bread4_link' => '',
@@ -65,13 +65,13 @@ class RoleController extends Controller
     public function create(): View
     {
         $metadata = [
-            'title' => 'Tambah Peran',
-            'desc' => 'Halaman untuk menambah peran baru.',
+            'title' => 'Tambah Role',
+            'desc' => 'Halaman untuk menambah role baru.',
             'bread1' => '<i class="ki-outline ki-home text-gray-700 fs-6"></i>',
             'bread1_link' => route('dashboard'),
             'bread2' => 'Dashboard',
             'bread2_link' => route('dashboard'),
-            'bread3' => 'Peran',
+            'bread3' => 'Role',
             'bread3_link' => route('setting.role.index'),
             'bread4' => 'Tambah',
             'bread4_link' => '',
@@ -122,13 +122,13 @@ class RoleController extends Controller
             }
 
             $metadata = [
-                'title' => 'Detail Peran',
-                'desc' => 'Halaman detail peran ' . $role->name . '.',
+                'title' => 'Detail Role',
+                'desc' => 'Halaman detail role ' . $role->name . '.',
                 'bread1' => '<i class="ki-outline ki-home text-gray-700 fs-6"></i>',
                 'bread1_link' => route('dashboard'),
                 'bread2' => 'Dashboard',
                 'bread2_link' => route('dashboard'),
-                'bread3' => 'Peran',
+                'bread3' => 'Role',
                 'bread3_link' => route('setting.role.index'),
                 'bread4' => 'Detail',
                 'bread4_link' => '',

@@ -11,6 +11,9 @@
 @stack('vendor-script')
 <!--end::Vendors Javascript-->
 
-<!--begin::Custom Javascript(used for this page only)-->
+<!--begin::Ziggy Routes-->
+@routes
+<!--end::Ziggy Routes--><!--begin::Custom Javascript(used for this page only)-->
+
 @stack('custom-script')
 <!--end::Custom Javascript-->
