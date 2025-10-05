@@ -111,7 +111,11 @@ var KTRolesList = (function () {
             '[data-kt-roles-table-filter="search"]'
         );
         filterSearch.addEventListener("keyup", function (e) {
-            datatable.search(e.target.value).draw();
+            // Add a small delay to avoid too many requests
+            clearTimeout(window.searchTimeout);
+            window.searchTimeout = setTimeout(function () {
+                datatable.search(e.target.value).draw();
+            }, 300);
         });
     };
 

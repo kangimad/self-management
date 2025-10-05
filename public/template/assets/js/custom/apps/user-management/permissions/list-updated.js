@@ -49,10 +49,13 @@ var KTPermissionsListDatatable = (function () {
                         Accept: "application/json",
                     },
                     data: function (d) {
-                        // Add search parameters
-                        d.search = $(
+                        // Add custom search parameter to the default DataTables search
+                        const customSearch = $(
                             '[data-kt-permissions-table-filter="search"]'
                         ).val();
+                        if (customSearch) {
+                            d.search.value = customSearch;
+                        }
                         return d;
                     },
                     error: function (xhr, status, error) {
@@ -244,8 +247,22 @@ var KTPermissionsListDatatable = (function () {
         const filterSearch = document.querySelector(
             '[data-kt-permissions-table-filter="search"]'
         );
+
+        if (!filterSearch) {
+            console.error("Search input not found");
+            return;
+        }
+
         filterSearch.addEventListener("keyup", function (e) {
-            datatable.ajax.reload();
+            // Add a small delay to avoid too many requests
+            clearTimeout(window.searchTimeout);
+            window.searchTimeout = setTimeout(function () {
+                if (datatable) {
+                    datatable.ajax.reload();
+                } else {
+                    console.error("DataTable not initialized");
+                }
+            }, 300);
         });
     };
 
