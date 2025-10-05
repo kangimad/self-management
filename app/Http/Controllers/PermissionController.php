@@ -41,7 +41,7 @@ class PermissionController extends Controller
             'page' => 'Daftar',
         ];
 
-        return view('dashboard.pages.permissions.index', compact('metadata'));
+        return view('dashboard.pages.settings.permissions.index', compact('metadata'));
     }
 
     /**

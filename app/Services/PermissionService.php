@@ -70,7 +70,7 @@ class PermissionService
                     $roles = '<span class="text-muted">Tidak ada role</span>';
                 }
 
-                $actions = view('dashboard.pages.permissions.partials.actions', compact('permission'))->render();
+                $actions = view('dashboard.pages.settings.permissions.partials.actions', compact('permission'))->render();
 
                 $data[] = [
                     'id' => $permission->id,

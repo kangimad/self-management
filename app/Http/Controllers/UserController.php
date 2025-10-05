@@ -55,7 +55,7 @@ class UserController extends Controller
 
         // For non-AJAX requests, we don't need the result data anymore
         // since DataTable will load data via AJAX
-        return view('dashboard.pages.users.index', compact('metadata', 'roles', 'statistics'));
+        return view('dashboard.pages.settings.users.index', compact('metadata', 'roles', 'statistics'));
     }
 
     /**
@@ -321,7 +321,7 @@ class UserController extends Controller
 
         // For non-AJAX requests, we don't need the result data anymore
         // since DataTable will load data via AJAX
-        return view('dashboard.pages.users.show', compact('metadata', 'roles', 'user'));
+        return view('dashboard.pages.settings.users.show', compact('metadata', 'roles', 'user'));
     }
 
     /**

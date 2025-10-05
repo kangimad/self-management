@@ -24,6 +24,28 @@
                 @endif
 
                 @if (request()->routeIs('setting*'))
+                @can('setting')
+                        <!--begin::Col-->
+                        <div class="col-12">
+                            <!--begin::Link-->
+                            <a href="{{ route('setting.index') }}"
+                                class="btn btn-icon btn-outline btn-bg-light {{ request()->routeIs('setting.index') ? 'btn-light-primary' : '' }} btn-flex justify-content-start w-100 h-100 border-gray-200 p-3"
+                                data-kt-button="true">
+                                <!--begin::Icon-->
+                                <span class="me-2">
+                                    <i class="ki-outline ki-abstract-26 fs-1"></i>
+                                </span>
+                                <!--end::Icon-->
+
+                                <!--begin::Label-->
+                                <span class="fs-7 fw-bold">Summary</span>
+                                <!--end::Label-->
+                            </a>
+                            <!--end::Link-->
+                        </div>
+                        <!--end::Col-->
+                    @endcan
+
                     @can('user-list')
                         <!--begin::Col-->
                         <div class="col-12">

@@ -56,7 +56,7 @@ class RoleController extends Controller
         $roles = $this->roleService->getAllRoles();
         $permissions = $this->roleService->getAllPermissionsFlat();
 
-        return view('dashboard.pages.roles.index', compact('metadata', 'roles', 'permissions'));
+        return view('dashboard.pages.settings.roles.index', compact('metadata', 'roles', 'permissions'));
     }
 
     /**
@@ -82,7 +82,7 @@ class RoleController extends Controller
 
         $permissions = $this->roleService->getAllPermissions();
 
-        return view('dashboard.pages.roles.create', compact('metadata', 'permissions'));
+        return view('dashboard.pages.settings.roles.create', compact('metadata', 'permissions'));
     }
 
     /**
@@ -139,7 +139,7 @@ class RoleController extends Controller
 
             $permissions = $this->roleService->getAllPermissions();
 
-            return view('dashboard.pages.roles.show', compact('metadata', 'role', 'permissions'));
+            return view('dashboard.pages.settings.roles.show', compact('metadata', 'role', 'permissions'));
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
