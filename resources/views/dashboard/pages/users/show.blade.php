@@ -17,8 +17,11 @@
                     <!--end::Title-->
                 </div>
                 <!--end::Page title-->
+            </div>
+            <!--end::Toolbar container-->
 
-                <!--begin::Breadcrumb-->
+            <!--begin::Breadcrumb-->
+            <div class="d-flex align-self-center flex-center flex-shrink-0">
                 <ul class="breadcrumb breadcrumb-separatorless fw-semibold mb-3 fs-7">
                     @if (isset($metadata['bread1']) && $metadata['bread1'] != '')
                         <li class="breadcrumb-item text-gray-700 fw-bold lh-1">
@@ -79,21 +82,8 @@
                         <li class="breadcrumb-item text-gray-700">{{ $metadata['page'] ?? '' }}</li>
                     @endif
                 </ul>
-                <!--end::Breadcrumb-->
             </div>
-            <!--end::Toolbar container-->
-            <!--begin::Actions-->
-            <div class="d-flex align-self-center flex-center flex-shrink-0">
-                <a href="#" class="btn btn-sm btn-success d-flex flex-center ms-3 px-4 py-3" data-bs-toggle="modal"
-                    data-bs-target="#kt_modal_invite_friends">
-                    <i class="ki-outline ki-plus-square fs-2"></i>
-                    <span>Invite</span>
-                </a>
-                <a href="#" class="btn btn-sm btn-dark ms-3 px-4 py-3" data-bs-toggle="modal"
-                    data-bs-target="#kt_modal_new_target">Create
-                    <span class="d-none d-sm-inline">Target</span></a>
-            </div>
-            <!--end::Actions-->
+            <!--end::Breadcrumb-->
         </div>
         <!--end::Toolbar container-->
     </div>
@@ -200,7 +190,7 @@
                     <!--end:::Tab item-->
                     <!--begin:::Tab item-->
                     <li class="nav-item ms-auto">
-                        <a href="#" class="btn btn-primary ps-7" data-kt-users-detail="delete_row"
+                        <a href="#" class="btn btn-danger ps-7" data-kt-users-detail="delete_row"
                             data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}">
                             Hapus Pengguna
                         </a>
@@ -2234,19 +2224,8 @@
                                         id="kt_table_users_login_session">
                                         <tbody class="fs-6 fw-semibold text-gray-600">
                                             <tr>
-                                                <td>Email</td>
-                                                <td>smith@kpmg.com</td>
-                                                <td class="text-end">
-                                                    <button type="button"
-                                                        class="btn btn-icon btn-active-light-primary w-30px h-30px ms-auto"
-                                                        data-bs-toggle="modal" data-bs-target="#kt_modal_update_email">
-                                                        <i class="ki-outline ki-pencil fs-3"></i>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                            <tr>
                                                 <td>Password</td>
-                                                <td>******</td>
+                                                <td>{{ str_repeat('*', 8) }}</td>
                                                 <td class="text-end">
                                                     <button type="button"
                                                         class="btn btn-icon btn-active-light-primary w-30px h-30px ms-auto"
@@ -2257,7 +2236,7 @@
                                             </tr>
                                             <tr>
                                                 <td>Role</td>
-                                                <td>Administrator</td>
+                                                <td>{{$user->role_summary}}</td>
                                                 <td class="text-end">
                                                     <button type="button"
                                                         class="btn btn-icon btn-active-light-primary w-30px h-30px ms-auto"
@@ -2671,7 +2650,8 @@
                     <!--begin::Modal body-->
                     <div class="modal-body scroll-y mx-5 mx-xl-15 my-7">
                         <!--begin::Form-->
-                        <form id="kt_modal_update_password_form" class="form" action="#">
+                        <form id="kt_modal_update_password_form" class="form" action="#"
+                            data-user-id="{{ $user->id }}">
                             <!--begin::Input group=-->
                             <div class="fv-row mb-10">
                                 <label class="required form-label fs-6 mb-2">Current Password</label>
@@ -2710,7 +2690,7 @@
                                 </div>
                                 <!--end::Wrapper-->
                                 <!--begin::Hint-->
-                                <div class="text-muted">Use 8 or more characters with a mix of letters, numbers & symbols.
+                                <div class="text-muted">Gunakan 8 karakter atau lebih.
                                 </div>
                                 <!--end::Hint-->
                             </div>
@@ -2725,10 +2705,10 @@
                             <!--begin::Actions-->
                             <div class="text-center pt-15">
                                 <button type="reset" class="btn btn-light me-3"
-                                    data-kt-users-modal-action="cancel">Discard</button>
+                                    data-kt-users-modal-action="cancel">Batal</button>
                                 <button type="submit" class="btn btn-primary" data-kt-users-modal-action="submit">
-                                    <span class="indicator-label">Submit</span>
-                                    <span class="indicator-progress">Please wait...
+                                    <span class="indicator-label">Perbarui</span>
+                                    <span class="indicator-progress">Silakan tunggu...
                                         <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
                                 </button>
                             </div>
@@ -2753,7 +2733,7 @@
                     <!--begin::Modal header-->
                     <div class="modal-header">
                         <!--begin::Modal title-->
-                        <h2 class="fw-bold">Update User Role</h2>
+                        <h2 class="fw-bold">Perbarui Pera User</h2>
                         <!--end::Modal title-->
                         <!--begin::Close-->
                         <div class="btn btn-icon btn-sm btn-active-icon-primary" data-kt-users-modal-action="close">
@@ -2765,142 +2745,59 @@
                     <!--begin::Modal body-->
                     <div class="modal-body scroll-y mx-5 mx-xl-15 my-7">
                         <!--begin::Form-->
-                        <form id="kt_modal_update_role_form" class="form" action="#">
-                            <!--begin::Notice-->
-                            <!--begin::Notice-->
-                            <div
-                                class="notice d-flex bg-light-primary rounded border-primary border border-dashed mb-9 p-6">
-                                <!--begin::Icon-->
-                                <i class="ki-outline ki-information fs-2tx text-primary me-4"></i>
-                                <!--end::Icon-->
-                                <!--begin::Wrapper-->
-                                <div class="d-flex flex-stack flex-grow-1">
-                                    <!--begin::Content-->
-                                    <div class="fw-semibold">
-                                        <div class="fs-6 text-gray-700">Please note that reducing a user role rank, that
-                                            user will lose all priviledges that was assigned to the previous role.</div>
-                                    </div>
-                                    <!--end::Content-->
-                                </div>
-                                <!--end::Wrapper-->
-                            </div>
-                            <!--end::Notice-->
-                            <!--end::Notice-->
+                        <form id="kt_modal_update_role_form" class="form" action="#" data-user-id="{{ $user->id }}">
                             <!--begin::Input group-->
-                            <div class="fv-row mb-7">
-                                <!--begin::Label-->
+                            <div class="fv-row mb-7" data-user-roles="{{ json_encode($user->roles->pluck('id')->toArray()) }}">
                                 <label class="fs-6 fw-semibold form-label mb-5">
-                                    <span class="required">Select a user role</span>
+                                    <span class="required">Pilih Role Pengguna</span>
                                 </label>
-                                <!--end::Label-->
-                                <!--begin::Input row-->
-                                <div class="d-flex">
-                                    <!--begin::Radio-->
-                                    <div class="form-check form-check-custom form-check-solid">
-                                        <!--begin::Input-->
-                                        <input class="form-check-input me-3" name="user_role" type="radio"
-                                            value="0" id="kt_modal_update_role_option_0" checked='checked' />
-                                        <!--end::Input-->
-                                        <!--begin::Label-->
-                                        <label class="form-check-label" for="kt_modal_update_role_option_0">
-                                            <div class="fw-bold text-gray-800">Administrator</div>
-                                            <div class="text-gray-600">Best for business owners and company administrators
-                                            </div>
-                                        </label>
-                                        <!--end::Label-->
-                                    </div>
-                                    <!--end::Radio-->
-                                </div>
-                                <!--end::Input row-->
-                                <div class='separator separator-dashed my-5'></div>
-                                <!--begin::Input row-->
-                                <div class="d-flex">
-                                    <!--begin::Radio-->
-                                    <div class="form-check form-check-custom form-check-solid">
-                                        <!--begin::Input-->
-                                        <input class="form-check-input me-3" name="user_role" type="radio"
-                                            value="1" id="kt_modal_update_role_option_1" />
-                                        <!--end::Input-->
-                                        <!--begin::Label-->
-                                        <label class="form-check-label" for="kt_modal_update_role_option_1">
-                                            <div class="fw-bold text-gray-800">Developer</div>
-                                            <div class="text-gray-600">Best for developers or people primarily using the
-                                                API</div>
-                                        </label>
-                                        <!--end::Label-->
-                                    </div>
-                                    <!--end::Radio-->
-                                </div>
-                                <!--end::Input row-->
-                                <div class='separator separator-dashed my-5'></div>
-                                <!--begin::Input row-->
-                                <div class="d-flex">
-                                    <!--begin::Radio-->
-                                    <div class="form-check form-check-custom form-check-solid">
-                                        <!--begin::Input-->
-                                        <input class="form-check-input me-3" name="user_role" type="radio"
-                                            value="2" id="kt_modal_update_role_option_2" />
-                                        <!--end::Input-->
-                                        <!--begin::Label-->
-                                        <label class="form-check-label" for="kt_modal_update_role_option_2">
-                                            <div class="fw-bold text-gray-800">Analyst</div>
-                                            <div class="text-gray-600">Best for people who need full access to analytics
-                                                data, but don't need to update business settings</div>
-                                        </label>
-                                        <!--end::Label-->
-                                    </div>
-                                    <!--end::Radio-->
-                                </div>
-                                <!--end::Input row-->
-                                <div class='separator separator-dashed my-5'></div>
-                                <!--begin::Input row-->
-                                <div class="d-flex">
-                                    <!--begin::Radio-->
-                                    <div class="form-check form-check-custom form-check-solid">
-                                        <!--begin::Input-->
-                                        <input class="form-check-input me-3" name="user_role" type="radio"
-                                            value="3" id="kt_modal_update_role_option_3" />
-                                        <!--end::Input-->
-                                        <!--begin::Label-->
-                                        <label class="form-check-label" for="kt_modal_update_role_option_3">
-                                            <div class="fw-bold text-gray-800">Support</div>
-                                            <div class="text-gray-600">Best for employees who regularly refund payments
-                                                and respond to disputes</div>
-                                        </label>
-                                        <!--end::Label-->
-                                    </div>
-                                    <!--end::Radio-->
-                                </div>
-                                <!--end::Input row-->
-                                <div class='separator separator-dashed my-5'></div>
-                                <!--begin::Input row-->
-                                <div class="d-flex">
-                                    <!--begin::Radio-->
-                                    <div class="form-check form-check-custom form-check-solid">
-                                        <!--begin::Input-->
-                                        <input class="form-check-input me-3" name="user_role" type="radio"
-                                            value="4" id="kt_modal_update_role_option_4" />
-                                        <!--end::Input-->
-                                        <!--begin::Label-->
-                                        <label class="form-check-label" for="kt_modal_update_role_option_4">
-                                            <div class="fw-bold text-gray-800">Trial</div>
-                                            <div class="text-gray-600">Best for people who need to preview content data,
-                                                but don't need to make any updates</div>
-                                        </label>
-                                        <!--end::Label-->
-                                    </div>
-                                    <!--end::Radio-->
-                                </div>
-                                <!--end::Input row-->
+                                @foreach ($roles as $role)
+    <div class="d-flex flex-column mb-5">
+        <div class="form-check form-check-custom form-check-solid align-items-start">
+            <input
+                class="form-check-input me-3 mt-1 role-radio-style"
+                name="user_role[]"
+                type="checkbox"
+                id="kt_modal_update_role_option_{{ $loop->index }}"
+                value="{{ $role->id }}"
+                @checked(in_array($role->id, old('user_role', $user->roles->pluck('id')->toArray() ?? [])))
+            />
+
+            <label class="form-check-label" for="kt_modal_update_role_option_{{ $loop->index }}">
+                <div class="fw-bold text-gray-800">{{ $role->name }}</div>
+
+                @if ($role->permissions->count())
+                    <div class="mt-2">
+                        <div class="d-flex flex-wrap gap-1">
+                            @foreach ($role->permissions as $permission)
+                                <span class="badge bg-light text-gray-700 border border-secondary fw-normal fs-8">
+                                    <i class="ki-duotone ki-check-circle fs-7 text-success me-1"></i>
+                                    {{ $permission->name }}
+                                </span>
+                            @endforeach
+                        </div>
+                    </div>
+                @else
+                    <div class="text-gray-500 small fst-italic">Tidak ada permission</div>
+                @endif
+            </label>
+        </div>
+    </div>
+
+    @if (!$loop->last)
+        <div class="separator separator-dashed my-5"></div>
+    @endif
+@endforeach
+
                             </div>
                             <!--end::Input group-->
                             <!--begin::Actions-->
                             <div class="text-center pt-15">
                                 <button type="reset" class="btn btn-light me-3"
-                                    data-kt-users-modal-action="cancel">Discard</button>
+                                    data-kt-users-modal-action="cancel">Batal</button>
                                 <button type="submit" class="btn btn-primary" data-kt-users-modal-action="submit">
-                                    <span class="indicator-label">Submit</span>
-                                    <span class="indicator-progress">Please wait...
+                                    <span class="indicator-label">Simpan</span>
+                                    <span class="indicator-progress">Mohon tunggu...
                                         <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
                                 </button>
                             </div>
@@ -3001,14 +2898,10 @@
         });
     </script>
 
-    <script src="{{ asset('template/assets/js/custom/apps/user-management/users/view/view.js') }}"></script>
+    {{-- <script src="{{ asset('template/assets/js/custom/apps/user-management/users/view/view.js') }}"></script> --}}
     <script src="{{ asset('template/assets/js/custom/apps/user-management/users/view/update-details-new.js') }}"></script>
     <script src="{{ asset('template/assets/js/custom/apps/user-management/users/view/add-schedule.js') }}"></script>
     <script src="{{ asset('template/assets/js/custom/apps/user-management/users/view/add-task.js') }}"></script>
-    <script src="{{ asset('template/assets/js/custom/apps/user-management/users/view/update-email.js') }}"></script>
-    <script src="{{ asset('template/assets/js/custom/apps/user-management/users/view/update-password.js') }}"></script>
-    <script src="{{ asset('template/assets/js/custom/apps/user-management/users/view/update-role.js') }}"></script>
-    <script src="{{ asset('template/assets/js/custom/apps/user-management/users/view/add-auth-app.js') }}"></script>
-    <script src="{{ asset('template/assets/js/custom/apps/user-management/users/view/add-one-time-password.js') }}">
-    </script>
+    <script src="{{ asset('template/assets/js/custom/apps/user-management/users/view/update-password-new.js') }}"></script>
+    <script src="{{ asset('template/assets/js/custom/apps/user-management/users/view/update-role-new.js') }}"></script>
 @endpush

@@ -137,6 +137,8 @@ Route::middleware(['auth', 'verified'])->prefix('setting')->name('setting.')->gr
         Route::get('/{user}', [\App\Http\Controllers\UserController::class, 'show'])->name('show');
         Route::put('/{user}', [\App\Http\Controllers\UserController::class, 'update'])->name('update');
         Route::patch('/{user}/detail', [\App\Http\Controllers\UserController::class, 'updateDetail'])->name('update.detail');
+        Route::patch('/{user}/password', [\App\Http\Controllers\UserController::class, 'updatePassword'])->name('update.password');
+        Route::patch('/{user}/role', [\App\Http\Controllers\UserController::class, 'updateRole'])->name('update.role');
         Route::delete('/{user}', [\App\Http\Controllers\UserController::class, 'destroy'])->name('destroy');
         Route::delete('/', [\App\Http\Controllers\UserController::class, 'destroyMultiple'])->name('destroy.multiple');
     });

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\UserStoreRequest;
 use App\Http\Requests\UserUpdateRequest;
 use App\Http\Requests\UserUpdateDetailRequest;
+use App\Http\Requests\UserUpdatePasswordRequest;
+use App\Http\Requests\UserUpdateRoleRequest;
 use App\Services\UserService;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -12,6 +14,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -171,6 +174,47 @@ class UserController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal memperbarui detail pengguna: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Update user password
+     */
+    public function updatePassword(UserUpdatePasswordRequest $request, User $user): JsonResponse
+    {
+        try {
+            $this->userService->updateUserPassword($user, $request->input('new_password'));
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Password berhasil diperbarui.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memperbarui password: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Update user roles
+     */
+    public function updateRole(UserUpdateRoleRequest $request, User $user): JsonResponse
+    {
+        try {
+            $updatedUser = $this->userService->updateUserRoles($user, $request->input('user_role'));
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Role pengguna berhasil diperbarui.',
+                'data' => $updatedUser
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memperbarui role: ' . $e->getMessage()
             ], 500);
         }
     }

@@ -1,18 +1,76 @@
 "use strict";
 
-var KTUsersUpdateDetailsNew = (function () {
-    const element = document.getElementById("kt_modal_update_details");
-    const form = element.querySelector("#kt_modal_update_user_form");
+var KTUsersUpdatePassword = (function () {
+    const element = document.getElementById("kt_modal_update_password");
+    const form = element.querySelector("#kt_modal_update_password_form");
     const modal = new bootstrap.Modal(element);
 
-    var initUpdateDetails = function () {
-        const submitButton = element.querySelector('[data-kt-users-modal-action="submit"]');
-        const cancelButton = element.querySelector('[data-kt-users-modal-action="cancel"]');
-        const closeButton = element.querySelector('[data-kt-users-modal-action="close"]');
+    var initUpdatePassword = function () {
+        const submitButton = element.querySelector(
+            '[data-kt-users-modal-action="submit"]'
+        );
+        const cancelButton = element.querySelector(
+            '[data-kt-users-modal-action="cancel"]'
+        );
+        const closeButton = element.querySelector(
+            '[data-kt-users-modal-action="close"]'
+        );
 
         // === SUBMIT ===
         submitButton.addEventListener("click", function (e) {
             e.preventDefault();
+
+            // Validasi form sederhana
+            const currentPassword = form.querySelector(
+                '[name="current_password"]'
+            ).value;
+            const newPassword = form.querySelector(
+                '[name="new_password"]'
+            ).value;
+            const confirmPassword = form.querySelector(
+                '[name="confirm_password"]'
+            ).value;
+
+            // Reset field errors
+            clearFieldErrors();
+
+            // Validasi dasar
+            if (!currentPassword) {
+                showFieldError(
+                    "current_password",
+                    "Password saat ini harus diisi"
+                );
+                return;
+            }
+
+            if (!newPassword) {
+                showFieldError("new_password", "Password baru harus diisi");
+                return;
+            }
+
+            if (newPassword.length < 8) {
+                showFieldError(
+                    "new_password",
+                    "Password baru minimal 8 karakter"
+                );
+                return;
+            }
+
+            if (!confirmPassword) {
+                showFieldError(
+                    "confirm_password",
+                    "Konfirmasi password harus diisi"
+                );
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                showFieldError(
+                    "confirm_password",
+                    "Konfirmasi password tidak cocok"
+                );
+                return;
+            }
 
             // Show loading
             submitButton.setAttribute("data-kt-indicator", "on");
@@ -29,10 +87,12 @@ var KTUsersUpdateDetailsNew = (function () {
             formData.append("_method", "PATCH");
 
             $.ajax({
-                url: getUpdateUrl(userId),
+                url: getUpdatePasswordUrl(userId),
                 type: "POST",
                 headers: {
-                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
+                        "content"
+                    ),
                     Accept: "application/json",
                     "X-Requested-With": "XMLHttpRequest",
                 },
@@ -43,7 +103,8 @@ var KTUsersUpdateDetailsNew = (function () {
                     resetButton(submitButton);
 
                     Swal.fire({
-                        text: response.message || "Data berhasil diperbarui!",
+                        text:
+                            response.message || "Password berhasil diperbarui!",
                         icon: "success",
                         buttonsStyling: false,
                         confirmButtonText: "Ok, mengerti!",
@@ -51,8 +112,8 @@ var KTUsersUpdateDetailsNew = (function () {
                             confirmButton: "btn fw-bold btn-primary",
                         },
                     }).then(() => {
+                        form.reset();
                         modal.hide();
-                        window.location.reload();
                     });
                 },
                 error: function (xhr) {
@@ -61,24 +122,15 @@ var KTUsersUpdateDetailsNew = (function () {
                     if (xhr.status === 422 && xhr.responseJSON?.errors) {
                         // Laravel validation error
                         const errors = xhr.responseJSON.errors;
-                        const messages = Object.values(errors).flat().join("\n");
-
-                        Swal.fire({
-                            text: messages,
-                            icon: "error",
-                            buttonsStyling: false,
-                            confirmButtonText: "Ok, mengerti!",
-                            customClass: {
-                                confirmButton: "btn fw-bold btn-primary",
-                            },
-                        });
-
-                        // Optional: tampilkan error di bawah input
                         showFieldErrors(errors);
+
+                        // Tampilkan pesan error pertama di SweetAlert
+                        const firstError = Object.values(errors)[0][0];
+                        showError(firstError);
                     } else {
                         showError(
                             xhr.responseJSON?.message ||
-                                "Terjadi kesalahan saat memperbarui data."
+                                "Terjadi kesalahan saat memperbarui password."
                         );
                     }
                 },
@@ -103,6 +155,7 @@ var KTUsersUpdateDetailsNew = (function () {
             }).then(function (result) {
                 if (result.value) {
                     form.reset();
+                    clearFieldErrors();
                     modal.hide();
                 }
             });
@@ -126,6 +179,7 @@ var KTUsersUpdateDetailsNew = (function () {
             }).then(function (result) {
                 if (result.value) {
                     form.reset();
+                    clearFieldErrors();
                     modal.hide();
                 }
             });
@@ -134,7 +188,9 @@ var KTUsersUpdateDetailsNew = (function () {
 
     // Helper: ambil user ID dari URL
     var getUserIdFromUrl = function () {
-        const userIdElement = form.querySelector("[data-user-id]") || document.querySelector("[data-user-id]");
+        const userIdElement =
+            form.querySelector("[data-user-id]") ||
+            document.querySelector("[data-user-id]");
         if (userIdElement) return userIdElement.getAttribute("data-user-id");
 
         const urlParts = window.location.pathname.split("/");
@@ -145,12 +201,12 @@ var KTUsersUpdateDetailsNew = (function () {
         return null;
     };
 
-    // Helper: buat URL update Laravel
-    var getUpdateUrl = function (userId) {
+    // Helper: buat URL update password Laravel
+    var getUpdatePasswordUrl = function (userId) {
         if (typeof window.route === "function") {
-            return window.route("setting.user.update.detail", userId);
+            return window.route("setting.user.update.password", userId);
         }
-        return `/setting/user/${userId}/detail`;
+        return `/setting/user/${userId}/password`;
     };
 
     // Helper: reset tombol submit
@@ -172,34 +228,61 @@ var KTUsersUpdateDetailsNew = (function () {
         });
     };
 
-    // Helper: tampilkan error di bawah input (opsional)
+    // Helper: tampilkan error di bawah input tertentu
+    var showFieldError = function (fieldName, message) {
+        const input = form.querySelector(`[name="${fieldName}"]`);
+        if (input) {
+            input.classList.add("is-invalid");
+
+            // Hapus error lama jika ada
+            const existingError =
+                input.parentNode.querySelector(".invalid-feedback");
+            if (existingError) {
+                existingError.remove();
+            }
+
+            // Tambah error baru
+            const errorDiv = document.createElement("div");
+            errorDiv.classList.add("invalid-feedback");
+            errorDiv.innerText = message;
+            input.parentNode.appendChild(errorDiv);
+        }
+    };
+
+    // Helper: tampilkan error di bawah input (dari Laravel validation)
     var showFieldErrors = function (errors) {
         Object.keys(errors).forEach((field) => {
-            const input = form.querySelector(`[name="${field}"]`);
-            if (input) {
-                const errorDiv = document.createElement("div");
-                errorDiv.classList.add("invalid-feedback");
-                errorDiv.innerText = errors[field][0];
-                if (!input.classList.contains("is-invalid")) {
-                    input.classList.add("is-invalid");
-                    input.parentNode.appendChild(errorDiv);
-                }
-            }
+            showFieldError(field, errors[field][0]);
+        });
+    };
+
+    // Helper: bersihkan semua field errors
+    var clearFieldErrors = function () {
+        // Hapus class is-invalid
+        const invalidInputs = form.querySelectorAll(".is-invalid");
+        invalidInputs.forEach((input) => {
+            input.classList.remove("is-invalid");
+        });
+
+        // Hapus pesan error
+        const errorMessages = form.querySelectorAll(".invalid-feedback");
+        errorMessages.forEach((error) => {
+            error.remove();
         });
     };
 
     return {
         init: function () {
             if (!element) {
-                console.warn("Update details modal not found");
+                console.warn("Update password modal not found");
                 return;
             }
-            initUpdateDetails();
+            initUpdatePassword();
         },
     };
 })();
 
 // Inisialisasi
 KTUtil.onDOMContentLoaded(function () {
-    KTUsersUpdateDetailsNew.init();
+    KTUsersUpdatePassword.init();
 });

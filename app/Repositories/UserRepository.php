@@ -103,10 +103,17 @@ class UserRepository
      */
     public function update(User $user, array $data): User
     {
-        $userData = [
-            'name' => $data['user_name'] ?? $data['name'],
-            'email' => $data['user_email'] ?? $data['email'],
-        ];
+        $userData = [];
+
+        // Only update name if provided
+        if (isset($data['user_name']) || isset($data['name'])) {
+            $userData['name'] = $data['user_name'] ?? $data['name'];
+        }
+
+        // Only update email if provided
+        if (isset($data['user_email']) || isset($data['email'])) {
+            $userData['email'] = $data['user_email'] ?? $data['email'];
+        }
 
         // Only update password if provided
         if (!empty($data['user_password']) || !empty($data['password'])) {

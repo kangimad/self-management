@@ -69,6 +69,42 @@ class UserService
     }
 
     /**
+     * Update user password
+     */
+    public function updateUserPassword(User $user, string $newPassword): User
+    {
+        $data = [
+            'password' => $newPassword // Kirim password mentah, biar repository yang hash
+        ];
+
+        return $this->userRepository->update($user, $data);
+    }
+
+    /**
+     * Update user roles
+     */
+    public function updateUserRoles(User $user, array $roleIds): User
+    {
+        // Validate that all role IDs exist
+        $validRoles = Role::whereIn('id', $roleIds)->pluck('id')->toArray();
+        
+        if (count($validRoles) !== count($roleIds)) {
+            throw new \Exception('Satu atau lebih role tidak valid.');
+        }
+
+        // Prevent removing all roles from current user
+        if ($user->id === Auth::id() && empty($roleIds)) {
+            throw new \Exception('Tidak dapat menghapus semua role dari akun sendiri.');
+        }
+
+        // Sync roles
+        $user->roles()->sync($roleIds);
+        
+        // Reload user with roles
+        return $user->load('roles');
+    }
+
+    /**
      * Delete user
      */
     public function deleteUser(User $user): bool
@@ -111,7 +147,7 @@ class UserService
      */
     public function getAvailableRoles(): Collection
     {
-        return Role::all();
+        return Role::with('permissions')->get(); // tambahkan eager load
     }
 
     /**
