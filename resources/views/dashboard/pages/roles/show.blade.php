@@ -113,14 +113,21 @@
                     <!--begin::Card body-->
                     <div class="card-body pt-0">
                         <!--begin::Permissions-->
-                        <div class="d-flex flex-column text-gray-600 overflow-auto" style="max-height: 50vh">
+                        <div class="text-gray-600 overflow-auto" style="max-height: 50vh;">
                             @if ($role->permissions && count($role->permissions) > 0)
-                                @foreach ($role->permissions as $permission)
-                                    <div class="d-flex align-items-center py-2">
-                                        <span class='bullet bg-primary me-3'></span>
-                                        <span>{{ $permission->name }}</span>
-                                    </div>
-                                @endforeach
+                                <div class="row g-2"> {{-- gunakan grid --}}
+                                    @foreach ($role->permissions as $permission)
+                                        <div class="col-12 col-sm-6 col-md-4 col-lg-12"> {{-- ubah sesuai jumlah kolom yang diinginkan --}}
+                                            <div class="d-flex align-items-center py-1">
+                                                <span class="bullet bg-primary me-2"
+                                                    style="width:6px;height:6px;border-radius:50%;"></span>
+                                                <span class="text-break">{{ $permission->name }}</span>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @else
+                                <div class="text-gray-500 fst-italic">Tidak ada permission</div>
                             @endif
                         </div>
                         <!--end::Permissions-->
@@ -128,8 +135,8 @@
                     <!--end::Card body-->
                     <!--begin::Card footer-->
                     <div class="card-footer pt-0">
-                        <button type="button" class="btn btn-light btn-active-primary" data-kt-role-edit-btn="true"
-                            data-role-id="{{ $role->id }}">Edit Role</button>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                            data-bs-target="#kt_modal_update_role" data-role-id="{{ $role->id }}">Edit Role</button>
                     </div>
                     <!--end::Card footer-->
                 </div>
@@ -169,19 +176,19 @@
                                         <div class="fv-row mb-10">
                                             <!--begin::Label-->
                                             <label class="fs-5 fw-bold form-label mb-2">
-                                                <span class="required">Role name</span>
+                                                <span class="required">Nama peran</span>
                                             </label>
                                             <!--end::Label-->
                                             <!--begin::Input-->
-                                            <input class="form-control form-control-solid" placeholder="Enter a role name"
-                                                name="role_name" value="Developer" />
+                                            <input class="form-control form-control-solid" placeholder="Masukkan nama peran"
+                                                name="role_name" value="{{ $role->name }}" />
                                             <!--end::Input-->
                                         </div>
                                         <!--end::Input group-->
                                         <!--begin::Permissions-->
                                         <div class="fv-row">
                                             <!--begin::Label-->
-                                            <label class="fs-5 fw-bold form-label mb-2">Role Permissions</label>
+                                            <label class="fs-5 fw-bold form-label mb-2">Permissions</label>
                                             <!--end::Label-->
                                             <!--begin::Table wrapper-->
                                             <div class="table-responsive">
@@ -191,7 +198,7 @@
                                                     <tbody class="text-gray-600 fw-semibold">
                                                         <!--begin::Table row-->
                                                         <tr>
-                                                            <td class="text-gray-800">Administrator Access
+                                                            <td class="text-gray-800">Administrator
                                                                 <span class="ms-1" data-bs-toggle="tooltip"
                                                                     title="Allows a full access to the system">
                                                                     <i
@@ -214,18 +221,32 @@
                                                         @if (isset($permissions))
                                                             @foreach ($permissions as $category => $categoryPermissions)
                                                                 <tr>
-                                                                    <td class="text-gray-800">{{ $category }}</td>
+                                                                    <td class="text-gray-800">
+                                                                        {{ $category }}
+                                                                        <label
+                                                                            class="form-check form-check-sm form-check-custom form-check-solid ms-3">
+                                                                            <input class="form-check-input"
+                                                                                type="checkbox" data-category-select-all
+                                                                                data-category="{{ $category }}" />
+                                                                            <span class="form-check-label">Pilih
+                                                                                semua</span>
+                                                                        </label>
+                                                                    </td>
                                                                     <td>
                                                                         <div class="d-flex flex-wrap">
                                                                             @foreach ($categoryPermissions as $permission)
                                                                                 <label
                                                                                     class="form-check form-check-sm form-check-custom form-check-solid me-5 me-lg-20">
-                                                                                    <input class="form-check-input"
+                                                                                    <input
+                                                                                        class="form-check-input permission-checkbox"
                                                                                         type="checkbox"
                                                                                         value="{{ $permission['name'] }}"
-                                                                                        name="permissions[]" />
-                                                                                    <span
-                                                                                        class="form-check-label">{{ $permission['display_name'] ?? $permission['name'] }}</span>
+                                                                                        name="permissions[]"
+                                                                                        data-category="{{ $category }}"
+                                                                                        @if ($role->permissions->contains('name', $permission['name'])) checked @endif />
+                                                                                    <span class="form-check-label">
+                                                                                        {{ $permission['display_name'] ?? $permission['name'] }}
+                                                                                    </span>
                                                                                 </label>
                                                                             @endforeach
                                                                         </div>
