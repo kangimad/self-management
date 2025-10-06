@@ -118,8 +118,8 @@
                         data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-attach="parent"
                         data-kt-menu-placement="bottom-end">
                         @if ($hasImage && $imageUrl)
-                            <img src="{{ $imageUrl }}" alt="{{ auth()->user()->name }}" class="img-fluid rounded-circle"
-                                style="object-fit:cover; object-position:center;" />
+                            <img src="{{ $imageUrl }}" alt="{{ auth()->user()->name }}"
+                                class="img-fluid rounded-circle" style="object-fit:cover; object-position:center;" />
                         @else
                             <div
                                 class="symbol-label fs-3 bg-light-primary text-primary d-flex align-items-center justify-content-center">
@@ -174,7 +174,7 @@
                         <!--end::Menu separator-->
                         <!--begin::Menu item-->
                         <div class="menu-item px-5">
-                            <a href="account/overview.html" class="menu-link px-5">My Profile</a>
+                            <a href="{{ route('profile.edit') }}" class="menu-link px-5">My Profile</a>
                         </div>
                         <!--end::Menu item-->
                         <!--begin::Menu separator-->
@@ -232,13 +232,18 @@
                         <!--end::Menu item-->
                         <!--begin::Menu item-->
                         <div class="menu-item px-5 my-1">
-                            <a href="account/settings.html" class="menu-link px-5">Account Settings</a>
+                            <a href="{{ route('profile.edit') }}" class="menu-link px-5">Account Settings</a>
                         </div>
                         <!--end::Menu item-->
                         <!--begin::Menu item-->
                         <div class="menu-item px-5">
-                            <a href="authentication/layouts/corporate/sign-in.html" class="menu-link px-5">Sign
-                                Out</a>
+                            <form method="POST" action="{{ route('logout') }}" style="display: inline;">
+                                @csrf
+                                <a href="#" class="menu-link px-5"
+                                    onclick="event.preventDefault(); this.closest('form').submit();">
+                                    Sign Out
+                                </a>
+                            </form>
                         </div>
                         <!--end::Menu item-->
                     </div>
