@@ -2,16 +2,25 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
-    return view('welcome');
+    if (Auth::check()) {
+        return redirect()->route('dashboard');
+    }
+    return view('auth.login');
 });
 
 Route::get('/dashboard-old', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard-old');
 Route::get('/dashboard', function () {
-    return view('dashboard.index');
+    $metadata = [
+        'title' => 'Dashboard',
+        'bread1' => 'Dashboard',
+        'bread1_link' => route('dashboard'),
+    ];
+    return view('dashboard.index', compact('metadata'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {

@@ -6,6 +6,8 @@ use Illuminate\Console\Command;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use App\Models\User;
+use App\Services\UserService;
+use App\Services\RoleService;
 
 class ManageRolePermission extends Command
 {
@@ -18,17 +20,18 @@ class ManageRolePermission extends Command
                             {action : The action to perform (list-roles, list-permissions, assign-role, remove-role, list-users)}
                             {--user= : User email for role assignment}
                             {--role= : Role name}';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = 'Manage roles and permissions for users';
 
-    /**
-     * Execute the console command.
-     */
+    protected UserService $userService;
+    protected RoleService $roleService;
+
+    public function __construct(UserService $userService, RoleService $roleService)
+    {
+        parent::__construct();
+        $this->userService = $userService;
+        $this->roleService = $roleService;
+    }
+
     public function handle()
     {
         $action = $this->argument('action');
@@ -56,7 +59,11 @@ class ManageRolePermission extends Command
 
     private function listRoles()
     {
-        $roles = Role::with('permissions')->get();
+        $roles = Role::with(['permissions' => function ($q) {
+            $q->orderBy('name');
+        }])
+            ->orderBy('name')
+            ->get();
 
         $this->info('Available Roles:');
         foreach ($roles as $role) {
@@ -69,7 +76,7 @@ class ManageRolePermission extends Command
 
     private function listPermissions()
     {
-        $permissions = Permission::all();
+        $permissions = Permission::orderBy('name')->get();
 
         $this->info('Available Permissions:');
         foreach ($permissions as $permission) {
@@ -135,7 +142,10 @@ class ManageRolePermission extends Command
 
     private function listUsers()
     {
-        $users = User::with('roles')->get();
+        $users = User::with(['roles' => function ($q) {
+            $q->orderBy('name');
+        }])
+        ->orderBy('name')->get();
 
         $this->info('Users and their roles:');
         foreach ($users as $user) {
