@@ -279,7 +279,9 @@ var KTCategoryTypesListDatatable = (function () {
             function (e) {
                 e.preventDefault();
 
-                const categoryTypeName = $(this).attr("data-category-type-name");
+                const categoryTypeName = $(this).attr(
+                    "data-category-type-name"
+                );
                 const categoryTypeId = $(this).attr("data-category-type-id");
 
                 // SweetAlert2 pop up
@@ -849,13 +851,17 @@ var KTCategoryTypesModal = (function () {
             .addEventListener("click", function (e) {
                 e.preventDefault();
                 $("#kt_modal_add_category_type").modal("hide");
-                document.getElementById("kt_modal_add_category_type_form").reset();
+                document
+                    .getElementById("kt_modal_add_category_type_form")
+                    .reset();
                 clearFormErrors();
             });
 
         // Clear error when user starts typing
         document
-            .querySelector('#kt_modal_add_category_type_form input[name="name"]')
+            .querySelector(
+                '#kt_modal_add_category_type_form input[name="name"]'
+            )
             .addEventListener("input", function () {
                 this.classList.remove("is-invalid");
                 const errorContainer =
@@ -884,7 +890,9 @@ var KTCategoryTypesModal = (function () {
                     "data-category-type-id"
                 );
                 const formData = new FormData(
-                    document.getElementById("kt_modal_update_category_type_form")
+                    document.getElementById(
+                        "kt_modal_update_category_type_form"
+                    )
                 );
 
                 // Show loading indication
@@ -907,7 +915,9 @@ var KTCategoryTypesModal = (function () {
                     success: function (response) {
                         // Hide loading indication
                         document
-                            .querySelector("#kt_modal_update_category_type_submit")
+                            .querySelector(
+                                "#kt_modal_update_category_type_submit"
+                            )
                             .removeAttribute("data-kt-indicator");
                         document.querySelector(
                             "#kt_modal_update_category_type_submit"
@@ -944,7 +954,9 @@ var KTCategoryTypesModal = (function () {
                     error: function (xhr) {
                         // Hide loading indication
                         document
-                            .querySelector("#kt_modal_update_category_type_submit")
+                            .querySelector(
+                                "#kt_modal_update_category_type_submit"
+                            )
                             .removeAttribute("data-kt-indicator");
                         document.querySelector(
                             "#kt_modal_update_category_type_submit"

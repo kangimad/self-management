@@ -190,7 +190,8 @@
                                 <label class="fs-6 fw-semibold form-label mb-2">
                                     <span class="required">Category Type Name</span>
                                     <span class="ms-2" data-bs-toggle="popover" data-bs-trigger="hover"
-                                        data-bs-html="true" data-bs-content="Category type names is required to be unique.">
+                                        data-bs-html="true"
+                                        data-bs-content="Category type names is required to be unique.">
                                         <i class="ki-outline ki-information fs-7"></i>
                                     </span>
                                 </label>
@@ -212,8 +213,8 @@
                                 </label>
                                 <!--end::Label-->
                                 <!--begin::Input-->
-                                <textarea class="form-control form-control-solid" placeholder="Masukkan deskripsi (opsional)"
-                                    name="description" rows="3"></textarea>
+                                <textarea class="form-control form-control-solid" placeholder="Masukkan deskripsi (opsional)" name="description"
+                                    rows="3"></textarea>
                                 <!--end::Input-->
                                 <!--begin::Error message-->
                                 <div class="fv-plugins-message-container invalid-feedback"></div>
@@ -269,7 +270,8 @@
                                 <label class="fs-6 fw-semibold form-label mb-2">
                                     <span class="required">Category Type Name</span>
                                     <span class="ms-2" data-bs-toggle="popover" data-bs-trigger="hover"
-                                        data-bs-html="true" data-bs-content="Category type names is required to be unique.">
+                                        data-bs-html="true"
+                                        data-bs-content="Category type names is required to be unique.">
                                         <i class="ki-outline ki-information fs-7"></i>
                                     </span>
                                 </label>
@@ -291,8 +293,8 @@
                                 </label>
                                 <!--end::Label-->
                                 <!--begin::Input-->
-                                <textarea class="form-control form-control-solid" placeholder="Masukkan deskripsi (opsional)"
-                                    name="description" rows="3"></textarea>
+                                <textarea class="form-control form-control-solid" placeholder="Masukkan deskripsi (opsional)" name="description"
+                                    rows="3"></textarea>
                                 <!--end::Input-->
                                 <!--begin::Error message-->
                                 <div class="fv-plugins-message-container invalid-feedback"></div>
