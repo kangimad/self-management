@@ -9,7 +9,7 @@ use Exception;
 
 class PermissionService
 {
-    protected PermissionRepository $permissionRepository;
+    protected $permissionRepository;
 
     public function __construct(PermissionRepository $permissionRepository)
     {
@@ -42,12 +42,50 @@ class PermissionService
             $start = $request->get('start', 0);
             $length = $request->get('length', 10);
             $searchValue = $request->get('search')['value'] ?? '';
+            $orderData = $request->get('order', []);
 
             $query = $this->permissionRepository->getForDataTable();
 
             // Apply search filter
             if (!empty($searchValue)) {
                 $query->where('name', 'like', "%{$searchValue}%");
+            }
+
+            // Apply ordering
+            $orderApplied = false;
+            if (!empty($orderData)) {
+                foreach ($orderData as $order) {
+                    $columnIndex = intval($order['column']);
+                    $direction = strtolower($order['dir']) === 'desc' ? 'desc' : 'asc';
+
+                    // Map column indices to actual column names
+                    $columns = [
+                        0 => null, // checkbox column - not sortable
+                        1 => null, // index column - not sortable
+                        2 => 'name',
+                        3 => 'roles', // This will be handled specially
+                        4 => 'created_at',
+                        5 => null, // actions column - not sortable
+                    ];
+
+                    if (isset($columns[$columnIndex]) && $columns[$columnIndex] !== null) {
+                        $columnName = $columns[$columnIndex];
+
+                        if ($columnName === 'roles') {
+                            // For roles column, order by the count of roles
+                            $query->withCount('roles')->orderBy('roles_count', $direction);
+                        } else {
+                            $query->orderBy($columnName, $direction);
+                        }
+                        $orderApplied = true;
+                        break; // Apply only the first valid order
+                    }
+                }
+            }
+
+            // Default ordering by name if no order was applied
+            if (!$orderApplied) {
+                $query->orderBy('name', 'asc');
             }
 
             // Get total records count

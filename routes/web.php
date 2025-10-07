@@ -11,17 +11,7 @@ Route::get('/', function () {
     return view('auth.login');
 });
 
-Route::get('/dashboard-old', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard-old');
-Route::get('/dashboard', function () {
-    $metadata = [
-        'title' => 'Dashboard',
-        'bread1' => 'Dashboard',
-        'bread1_link' => route('dashboard'),
-    ];
-    return view('dashboard.index', compact('metadata'));
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::middleware(['auth', 'verified'])->name('dashboard')->get('/dashboard', [\App\Http\Controllers\Dashboard\DashboardController::class, 'index']);
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -31,6 +21,8 @@ Route::middleware('auth')->group(function () {
 
 // Finance routes with permissions
 Route::middleware(['auth', 'verified'])->prefix('finance')->name('finance.')->group(function () {
+    // Summary
+    Route::get('/', [\App\Http\Controllers\Finance\FinanceController::class, 'index'])->name('index');
 
     // Transaction routes
     Route::middleware('permission:finance-transaction-list')->group(function () {
@@ -70,6 +62,27 @@ Route::middleware(['auth', 'verified'])->prefix('finance')->name('finance.')->gr
 
     Route::middleware('permission:finance-category-delete')->group(function () {
         Route::delete('/categories/{category}', [\App\Http\Controllers\Finance\FinanceCategoryController::class, 'destroy'])->name('categories.destroy');
+    });
+
+    // Category Type routes
+    Route::middleware('permission:finance-category-type-list')->name('category-types.')->group(function () {
+        Route::get('/category-types', [\App\Http\Controllers\Finance\FinanceCategoryTypeController::class, 'index'])->name('index');
+        Route::get('/datatable', [\App\Http\Controllers\Finance\FinanceCategoryTypeController::class, 'datatable'])->name('datatable');
+        Route::get('/category-types/{categoryType}', [\App\Http\Controllers\Finance\FinanceCategoryTypeController::class, 'show'])->name('show');
+    });
+
+    Route::middleware('permission:finance-category-type-create')->group(function () {
+        Route::get('/category-types/create', [\App\Http\Controllers\Finance\FinanceCategoryTypeController::class, 'create'])->name('category-types.create');
+        Route::post('/category-types', [\App\Http\Controllers\Finance\FinanceCategoryTypeController::class, 'store'])->name('category-types.store');
+    });
+
+    Route::middleware('permission:finance-category-type-edit')->group(function () {
+        Route::get('/category-types/{categoryType}/edit', [\App\Http\Controllers\Finance\FinanceCategoryTypeController::class, 'edit'])->name('category-types.edit');
+        Route::patch('/category-types/{categoryType}', [\App\Http\Controllers\Finance\FinanceCategoryTypeController::class, 'update'])->name('category-types.update');
+    });
+
+    Route::middleware('permission:finance-category-type-delete')->group(function () {
+        Route::delete('/category-types/{categoryType}', [\App\Http\Controllers\Finance\FinanceCategoryTypeController::class, 'destroy'])->name('category-types.destroy');
     });
 
     // Source routes

@@ -55,7 +55,7 @@
                             data-kt-menu-placement="bottom-start" data-kt-menu-offset="-100,0"
                             class="menu-item {{ request()->routeIs('finance*') ? 'here show menu-here-bg' : '' }} menu-lg-down-accordion me-0 me-lg-2">
                             <!--begin:Menu link-->
-                            <a href="{{ route('dashboard') }}" class="menu-link">
+                            <a href="{{ route('finance.index') }}" class="menu-link">
                                 <span class="menu-title">Finance</span>
                             </a>
                             <!--end:Menu link-->
@@ -127,6 +127,7 @@
                             </div>
                         @endif
                     </div>
+
                     <!--begin::User account menu-->
                     <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg menu-state-color fw-semibold py-4 fs-6 w-275px"
                         data-kt-menu="true">
@@ -228,11 +229,6 @@
                                 <!--end::Menu item-->
                             </div>
                             <!--end::Menu-->
-                        </div>
-                        <!--end::Menu item-->
-                        <!--begin::Menu item-->
-                        <div class="menu-item px-5 my-1">
-                            <a href="{{ route('profile.edit') }}" class="menu-link px-5">Account Settings</a>
                         </div>
                         <!--end::Menu item-->
                         <!--begin::Menu item-->

@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Auth;
 
 class RoleService
 {
-    protected RoleRepositoryInterface $roleRepository;
+    protected $roleRepository;
 
     public function __construct(RoleRepositoryInterface $roleRepository)
     {

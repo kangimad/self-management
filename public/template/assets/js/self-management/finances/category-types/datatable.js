@@ -1,15 +1,15 @@
 "use strict";
 
 // Class definition
-var KTPermissionsListDatatable = (function () {
+var KTCategoryTypesListDatatable = (function () {
     // Shared variables
     var datatable;
     var table;
     var initialized = false;
 
     // Private functions
-    var initPermissionTable = function () {
-        // console.log("Initializing Permission DataTable...");
+    var initCategoryTypeTable = function () {
+        // console.log("Initializing Category Type DataTable...");
 
         // Check if route helper is available
         if (typeof route !== "function") {
@@ -33,7 +33,7 @@ var KTPermissionsListDatatable = (function () {
                     { orderable: false, targets: 0 }, // Disable ordering on column 0 (checkbox)
                     { orderable: false, targets: 1 }, // Disable ordering on column 1 (index)
                     { orderable: true, targets: 2 }, // Enable ordering on column 2 (name)
-                    { orderable: true, targets: 3 }, // Enable ordering on column 3 (roles)
+                    { orderable: true, targets: 3 }, // Enable ordering on column 3 (categories)
                     { orderable: true, targets: 4 }, // Enable ordering on column 4 (created_at)
                     { orderable: false, targets: 5 }, // Disable ordering on column 5 (actions)
                     { searchable: false, targets: 0 }, // Disable searching on checkbox column
@@ -43,7 +43,7 @@ var KTPermissionsListDatatable = (function () {
                 processing: true,
                 serverSide: true,
                 ajax: {
-                    url: route("setting.permission.datatable"),
+                    url: route("finance.category-types.datatable"),
                     type: "GET",
                     headers: {
                         "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
@@ -55,7 +55,7 @@ var KTPermissionsListDatatable = (function () {
                     data: function (d) {
                         // Add custom search parameter to the default DataTables search
                         const customSearch = $(
-                            '[data-kt-permissions-table-filter="search"]'
+                            '[data-kt-category-types-table-filter="search"]'
                         ).val();
                         if (customSearch) {
                             d.search.value = customSearch;
@@ -108,7 +108,7 @@ var KTPermissionsListDatatable = (function () {
                         searchable: false,
                         render: function (data, type, row) {
                             return `<div class="form-check form-check-sm form-check-custom form-check-solid">
-                                    <input class="form-check-input permission-checkbox" type="checkbox" value="${row.id}" />
+                                    <input class="form-check-input category-type-checkbox" type="checkbox" value="${row.id}" />
                                 </div>`;
                         },
                     },
@@ -125,16 +125,16 @@ var KTPermissionsListDatatable = (function () {
                             return `<div class="d-flex align-items-center">
                                     <div class="d-flex flex-column">
                                         <span class="text-gray-800 text-hover-primary mb-1 fw-bold">${data}</span>
-                                        <span class="text-muted fs-7">Guard: ${row.guard_name}</span>
+                                        <span class="text-muted fs-7">${row.description}</span>
                                     </div>
                                 </div>`;
                         },
                     },
                     {
-                        data: "roles",
+                        data: "categories",
                         render: function (data, type, row) {
                             if (!data) {
-                                return '<span class="text-muted">Tidak ada role</span>';
+                                return '<span class="text-muted">Tidak ada kategori</span>';
                             }
                             return data;
                         },
@@ -155,10 +155,10 @@ var KTPermissionsListDatatable = (function () {
                                 </a>
                                 <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-125px py-4" data-kt-menu="true">
                                     <div class="menu-item px-3">
-                                        <a href="#" class="menu-link px-3" data-kt-permissions-table-filter="edit_row" data-permission-id="${row.id}">Edit</a>
+                                        <a href="#" class="menu-link px-3" data-kt-category-types-table-filter="edit_row" data-category-type-id="${row.id}">Edit</a>
                                     </div>
                                     <div class="menu-item px-3">
-                                        <a href="#" class="menu-link px-3" data-kt-permissions-table-filter="delete_row" data-permission-id="${row.id}" data-permission-name="${row.name}">Delete</a>
+                                        <a href="#" class="menu-link px-3" data-kt-category-types-table-filter="delete_row" data-category-type-id="${row.id}" data-category-type-name="${row.name}">Delete</a>
                                     </div>
                                 </div>`;
                         },
@@ -249,7 +249,7 @@ var KTPermissionsListDatatable = (function () {
     // Search Datatable
     var handleSearchDatatable = function () {
         const filterSearch = document.querySelector(
-            '[data-kt-permissions-table-filter="search"]'
+            '[data-kt-category-types-table-filter="search"]'
         );
 
         if (!filterSearch) {
@@ -275,18 +275,18 @@ var KTPermissionsListDatatable = (function () {
         // Handle Delete button click
         $(table).on(
             "click",
-            '[data-kt-permissions-table-filter="delete_row"]',
+            '[data-kt-category-types-table-filter="delete_row"]',
             function (e) {
                 e.preventDefault();
 
-                const permissionName = $(this).attr("data-permission-name");
-                const permissionId = $(this).attr("data-permission-id");
+                const categoryTypeName = $(this).attr("data-category-type-name");
+                const categoryTypeId = $(this).attr("data-category-type-id");
 
                 // SweetAlert2 pop up
                 Swal.fire({
                     text:
-                        "Yakin hendak menghapus permission " +
-                        permissionName +
+                        "Yakin hendak menghapus category type " +
+                        categoryTypeName +
                         "?",
                     icon: "warning",
                     showCancelButton: true,
@@ -299,11 +299,11 @@ var KTPermissionsListDatatable = (function () {
                     },
                 }).then(function (result) {
                     if (result.value) {
-                        // Delete permission via AJAX
+                        // Delete category type via AJAX
                         $.ajax({
                             url: route(
-                                "setting.permission.destroy",
-                                permissionId
+                                "finance.category-types.destroy",
+                                categoryTypeId
                             ),
                             type: "DELETE",
                             headers: {
@@ -362,41 +362,44 @@ var KTPermissionsListDatatable = (function () {
         // Handle Edit button click
         $(table).on(
             "click",
-            '[data-kt-permissions-table-filter="edit_row"]',
+            '[data-kt-category-types-table-filter="edit_row"]',
             function (e) {
                 e.preventDefault();
 
-                const permissionId = $(this).attr("data-permission-id");
+                const categoryTypeId = $(this).attr("data-category-type-id");
 
-                // Load permission data for editing
-                loadPermissionForEdit(permissionId);
+                // Load category type data for editing
+                loadCategoryTypeForEdit(categoryTypeId);
             }
         );
     };
 
-    // Load permission data for editing
-    var loadPermissionForEdit = function (permissionId) {
+    // Load category type data for editing
+    var loadCategoryTypeForEdit = function (categoryTypeId) {
         $.ajax({
-            url: route("setting.permission.show", permissionId),
+            url: route("finance.category-types.show", categoryTypeId),
             type: "GET",
             headers: {
                 "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
             },
             success: function (response) {
                 if (response.success) {
-                    const permission = response.data;
+                    const categoryType = response.data;
 
-                    // Fill the update modal with permission data
+                    // Fill the update modal with category type data
                     $(
-                        '#kt_modal_update_permission_form input[name="name"]'
-                    ).val(permission.name);
-                    $("#kt_modal_update_permission").attr(
-                        "data-permission-id",
-                        permission.id
+                        '#kt_modal_update_category_type_form input[name="name"]'
+                    ).val(categoryType.name);
+                    $(
+                        '#kt_modal_update_category_type_form textarea[name="description"]'
+                    ).val(categoryType.description);
+                    $("#kt_modal_update_category_type").attr(
+                        "data-category-type-id",
+                        categoryType.id
                     );
 
                     // Show the update modal
-                    $("#kt_modal_update_permission").modal("show");
+                    $("#kt_modal_update_category_type").modal("show");
                 } else {
                     Swal.fire({
                         text: response.message,
@@ -484,13 +487,13 @@ var KTPermissionsListDatatable = (function () {
         const selectedCount = selectedCheckboxes.length;
 
         const toolbarBase = document.querySelector(
-            '[data-kt-permission-table-toolbar="base"]'
+            '[data-kt-category-type-table-toolbar="base"]'
         );
         const toolbarSelected = document.querySelector(
-            '[data-kt-permission-table-toolbar="selected"]'
+            '[data-kt-category-type-table-toolbar="selected"]'
         );
         const selectedCountElement = document.querySelector(
-            '[data-kt-permission-table-select="selected_count"]'
+            '[data-kt-category-type-table-select="selected_count"]'
         );
 
         if (selectedCount > 0) {
@@ -506,7 +509,7 @@ var KTPermissionsListDatatable = (function () {
     // Handle bulk delete
     var handleBulkDelete = function () {
         const deleteSelectedButton = document.querySelector(
-            '[data-kt-permission-table-select="delete_selected"]'
+            '[data-kt-category-type-table-select="delete_selected"]'
         );
 
         if (deleteSelectedButton) {
@@ -523,7 +526,7 @@ var KTPermissionsListDatatable = (function () {
                 }
 
                 Swal.fire({
-                    text: `Yakin hendak menghapus ${selectedIds.length} permission?`,
+                    text: `Yakin hendak menghapus ${selectedIds.length} category type?`,
                     icon: "warning",
                     showCancelButton: true,
                     buttonsStyling: false,
@@ -535,7 +538,7 @@ var KTPermissionsListDatatable = (function () {
                     },
                 }).then(function (result) {
                     if (result.value) {
-                        // Delete selected permissions via AJAX
+                        // Delete selected category types via AJAX
                         $.ajax({
                             url: route("setting.permission.destroy.multiple"),
                             type: "DELETE",
@@ -604,14 +607,14 @@ var KTPermissionsListDatatable = (function () {
                 return;
             }
 
-            table = document.querySelector("#kt_permissions_table");
+            table = document.querySelector("#kt_category_types_table");
 
             if (!table) {
-                console.error("Table #kt_permissions_table not found");
+                console.error("Table #kt_category_types_table not found");
                 return;
             }
 
-            initPermissionTable();
+            initCategoryTypeTable();
             handleSearchDatatable();
             handleBulkDelete();
 
@@ -632,8 +635,8 @@ var KTPermissionsListDatatable = (function () {
     };
 })();
 
-// Permission Modal Handlers
-var KTPermissionsModal = (function () {
+// Category Type Modal Handlers
+var KTCategoryTypesModal = (function () {
     var submitAddButton;
     var submitUpdateButton;
     var cancelButton;
@@ -642,11 +645,11 @@ var KTPermissionsModal = (function () {
     var form;
     var modal;
 
-    // Init add permission modal
-    var initAddPermission = function () {
+    // Init add category type modal
+    var initAddCategoryType = function () {
         // Submit button handler
         submitAddButton = document.querySelector(
-            "#kt_modal_add_permission_submit"
+            "#kt_modal_add_category_type_submit"
         );
         submitAddButton.addEventListener("click", function (e) {
             e.preventDefault();
@@ -658,11 +661,11 @@ var KTPermissionsModal = (function () {
 
             // Simple client-side validation
             const nameInput = document.querySelector(
-                '#kt_modal_add_permission_form input[name="name"]'
+                '#kt_modal_add_category_type_form input[name="name"]'
             );
             if (!nameInput.value.trim()) {
                 Swal.fire({
-                    text: "Nama permission harus diisi",
+                    text: "Nama category type harus diisi",
                     icon: "error",
                     buttonsStyling: false,
                     confirmButtonText: "Ok, got it!",
@@ -679,11 +682,11 @@ var KTPermissionsModal = (function () {
 
             // Submit form data
             const formData = new FormData(
-                document.getElementById("kt_modal_add_permission_form")
+                document.getElementById("kt_modal_add_category_type_form")
             );
 
             $.ajax({
-                url: route("setting.permission.store"),
+                url: route("finance.category-types.store"),
                 type: "POST",
                 data: formData,
                 processData: false,
@@ -797,9 +800,9 @@ var KTPermissionsModal = (function () {
         // Function to clear form errors
         var clearFormErrors = function () {
             const form = document.getElementById(
-                "kt_modal_add_permission_form"
+                "kt_modal_add_category_type_form"
             );
-            const inputs = form.querySelectorAll("input");
+            const inputs = form.querySelectorAll("input, textarea");
             const errorContainers = form.querySelectorAll(".invalid-feedback");
 
             inputs.forEach(function (input) {
@@ -814,12 +817,12 @@ var KTPermissionsModal = (function () {
 
         // Cancel button handler
         document
-            .querySelector("#kt_modal_add_permission_cancel")
+            .querySelector("#kt_modal_add_category_type_cancel")
             .addEventListener("click", function (e) {
                 e.preventDefault();
 
                 Swal.fire({
-                    text: "Yakin membatalkan pembuatan permission?",
+                    text: "Yakin membatalkan pembuatan category type?",
                     icon: "warning",
                     showCancelButton: true,
                     buttonsStyling: false,
@@ -831,9 +834,9 @@ var KTPermissionsModal = (function () {
                     },
                 }).then(function (result) {
                     if (result.value) {
-                        $("#kt_modal_add_permission").modal("hide");
+                        $("#kt_modal_add_category_type").modal("hide");
                         document
-                            .getElementById("kt_modal_add_permission_form")
+                            .getElementById("kt_modal_add_category_type_form")
                             .reset();
                         clearFormErrors();
                     }
@@ -842,17 +845,17 @@ var KTPermissionsModal = (function () {
 
         // Close button handler
         document
-            .querySelector("#kt_modal_add_permission_close")
+            .querySelector("#kt_modal_add_category_type_close")
             .addEventListener("click", function (e) {
                 e.preventDefault();
-                $("#kt_modal_add_permission").modal("hide");
-                document.getElementById("kt_modal_add_permission_form").reset();
+                $("#kt_modal_add_category_type").modal("hide");
+                document.getElementById("kt_modal_add_category_type_form").reset();
                 clearFormErrors();
             });
 
         // Clear error when user starts typing
         document
-            .querySelector('#kt_modal_add_permission_form input[name="name"]')
+            .querySelector('#kt_modal_add_category_type_form input[name="name"]')
             .addEventListener("input", function () {
                 this.classList.remove("is-invalid");
                 const errorContainer =
@@ -864,11 +867,11 @@ var KTPermissionsModal = (function () {
             });
     };
 
-    // Init update permission modal
-    var initUpdatePermission = function () {
+    // Init update category type modal
+    var initUpdateCategoryType = function () {
         // Submit button handler
         document
-            .querySelector("#kt_modal_update_permission_submit")
+            .querySelector("#kt_modal_update_category_type_submit")
             .addEventListener("click", function (e) {
                 e.preventDefault();
 
@@ -877,11 +880,11 @@ var KTPermissionsModal = (function () {
                     return false;
                 }
 
-                const permissionId = $("#kt_modal_update_permission").attr(
-                    "data-permission-id"
+                const categoryTypeId = $("#kt_modal_update_category_type").attr(
+                    "data-category-type-id"
                 );
                 const formData = new FormData(
-                    document.getElementById("kt_modal_update_permission_form")
+                    document.getElementById("kt_modal_update_category_type_form")
                 );
 
                 // Show loading indication
@@ -889,10 +892,11 @@ var KTPermissionsModal = (function () {
                 this.disabled = true;
 
                 $.ajax({
-                    url: route("setting.permission.update", permissionId),
+                    url: route("finance.category-types.update", categoryTypeId),
                     type: "PUT",
                     data: {
                         name: formData.get("name"),
+                        description: formData.get("description"),
                         _token: $('meta[name="csrf-token"]').attr("content"),
                     },
                     headers: {
@@ -903,10 +907,10 @@ var KTPermissionsModal = (function () {
                     success: function (response) {
                         // Hide loading indication
                         document
-                            .querySelector("#kt_modal_update_permission_submit")
+                            .querySelector("#kt_modal_update_category_type_submit")
                             .removeAttribute("data-kt-indicator");
                         document.querySelector(
-                            "#kt_modal_update_permission_submit"
+                            "#kt_modal_update_category_type_submit"
                         ).disabled = false;
 
                         if (response.success) {
@@ -940,10 +944,10 @@ var KTPermissionsModal = (function () {
                     error: function (xhr) {
                         // Hide loading indication
                         document
-                            .querySelector("#kt_modal_update_permission_submit")
+                            .querySelector("#kt_modal_update_category_type_submit")
                             .removeAttribute("data-kt-indicator");
                         document.querySelector(
-                            "#kt_modal_update_permission_submit"
+                            "#kt_modal_update_category_type_submit"
                         ).disabled = false;
 
                         const response = xhr.responseJSON;
@@ -972,41 +976,41 @@ var KTPermissionsModal = (function () {
 
         // Cancel button handler
         document
-            .querySelector("#kt_modal_update_permission_cancel")
+            .querySelector("#kt_modal_update_category_type_cancel")
             .addEventListener("click", function (e) {
                 e.preventDefault();
-                $("#kt_modal_update_permission").modal("hide");
+                $("#kt_modal_update_category_type").modal("hide");
             });
 
         // Close button handler
         document
-            .querySelector("#kt_modal_update_permission_close")
+            .querySelector("#kt_modal_update_category_type_close")
             .addEventListener("click", function (e) {
                 e.preventDefault();
-                $("#kt_modal_update_permission").modal("hide");
+                $("#kt_modal_update_category_type").modal("hide");
             });
     };
 
     return {
         init: function () {
-            initAddPermission();
-            initUpdatePermission();
+            initAddCategoryType();
+            initUpdateCategoryType();
         },
     };
 })();
 
 // On document ready
 KTUtil.onDOMContentLoaded(function () {
-    KTPermissionsListDatatable.init();
-    KTPermissionsModal.init();
+    KTCategoryTypesListDatatable.init();
+    KTCategoryTypesModal.init();
 });
 
 // Alternative initialization if KTUtil is not available
 $(document).ready(function () {
-    if (typeof KTPermissionsListDatatable !== "undefined") {
-        KTPermissionsListDatatable.init();
+    if (typeof KTCategoryTypesListDatatable !== "undefined") {
+        KTCategoryTypesListDatatable.init();
     }
-    if (typeof KTPermissionsModal !== "undefined") {
-        KTPermissionsModal.init();
+    if (typeof KTCategoryTypesModal !== "undefined") {
+        KTCategoryTypesModal.init();
     }
 });

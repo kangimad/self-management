@@ -22,9 +22,9 @@ class PermissionRepository
      */
     public function getForDataTable()
     {
-        return Permission::with(['roles' => function ($query) {
+        return Permission::query()->with(['roles' => function ($query) {
             $query->select('id', 'name');
-        }])->orderBy('name');
+        }]);
     }
 
     /**
