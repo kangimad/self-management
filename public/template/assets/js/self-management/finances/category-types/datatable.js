@@ -286,7 +286,7 @@ var KTCategoryTypesListDatatable = (function () {
 
                 // SweetAlert2 pop up
                 Swal.fire({
-                    text: "Yakin hendak menghapus " + categoryTypeName + "?",
+                    text: "Yakin hendak menghapus data " + categoryTypeName + "?",
                     icon: "warning",
                     showCancelButton: true,
                     buttonsStyling: false,
@@ -525,7 +525,7 @@ var KTCategoryTypesListDatatable = (function () {
                 }
 
                 Swal.fire({
-                    text: `Yakin hendak menghapus ${selectedIds.length} category type?`,
+                    text: `Yakin hendak menghapus ${selectedIds.length} data?`,
                     icon: "warning",
                     showCancelButton: true,
                     buttonsStyling: false,
@@ -537,7 +537,7 @@ var KTCategoryTypesListDatatable = (function () {
                     },
                 }).then(function (result) {
                     if (result.value) {
-                        // Delete selected category types via AJAX
+                        // Delete selected datas via AJAX
                         $.ajax({
                             url: route(
                                 "finance.category-types.destroy-multiple"
@@ -819,7 +819,7 @@ var KTCategoryTypesModal = (function () {
                 e.preventDefault();
 
                 Swal.fire({
-                    text: "Yakin membatalkan pembuatan category type?",
+                    text: "Yakin membatalkan pembuatan data?",
                     icon: "warning",
                     showCancelButton: true,
                     buttonsStyling: false,
