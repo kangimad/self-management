@@ -9,7 +9,7 @@ var KTCategoryTypesListDatatable = (function () {
 
     // Private functions
     var initCategoryTypeTable = function () {
-        // console.log("Initializing Category Type DataTable...");
+        // console.log("Initializing DataTable...");
 
         // Check if route helper is available
         if (typeof route !== "function") {
@@ -82,7 +82,7 @@ var KTCategoryTypesListDatatable = (function () {
                                 text: "You don't have permission to access this resource.",
                                 icon: "error",
                                 buttonsStyling: false,
-                                confirmButtonText: "Ok, got it!",
+                                confirmButtonText: "Ok, baik!",
                                 customClass: {
                                     confirmButton: "btn fw-bold btn-primary",
                                 },
@@ -93,7 +93,7 @@ var KTCategoryTypesListDatatable = (function () {
                                 text: "Server error occurred. Please try again later.",
                                 icon: "error",
                                 buttonsStyling: false,
-                                confirmButtonText: "Ok, got it!",
+                                confirmButtonText: "Ok, baik!",
                                 customClass: {
                                     confirmButton: "btn fw-bold btn-primary",
                                 },
@@ -238,7 +238,7 @@ var KTCategoryTypesListDatatable = (function () {
                 text: "Error initializing data table. Please refresh the page.",
                 icon: "error",
                 buttonsStyling: false,
-                confirmButtonText: "Ok, got it!",
+                confirmButtonText: "Ok, baik!",
                 customClass: {
                     confirmButton: "btn fw-bold btn-primary",
                 },
@@ -286,10 +286,7 @@ var KTCategoryTypesListDatatable = (function () {
 
                 // SweetAlert2 pop up
                 Swal.fire({
-                    text:
-                        "Yakin hendak menghapus category type " +
-                        categoryTypeName +
-                        "?",
+                    text: "Yakin hendak menghapus " + categoryTypeName + "?",
                     icon: "warning",
                     showCancelButton: true,
                     buttonsStyling: false,
@@ -301,7 +298,7 @@ var KTCategoryTypesListDatatable = (function () {
                     },
                 }).then(function (result) {
                     if (result.value) {
-                        // Delete category type via AJAX
+                        // Delete via AJAX
                         $.ajax({
                             url: route(
                                 "finance.category-types.destroy",
@@ -319,7 +316,7 @@ var KTCategoryTypesListDatatable = (function () {
                                         text: response.message,
                                         icon: "success",
                                         buttonsStyling: false,
-                                        confirmButtonText: "Ok, got it!",
+                                        confirmButtonText: "Ok, baik!",
                                         customClass: {
                                             confirmButton:
                                                 "btn fw-bold btn-primary",
@@ -333,7 +330,7 @@ var KTCategoryTypesListDatatable = (function () {
                                         text: response.message,
                                         icon: "error",
                                         buttonsStyling: false,
-                                        confirmButtonText: "Ok, got it!",
+                                        confirmButtonText: "Ok, baik!",
                                         customClass: {
                                             confirmButton:
                                                 "btn fw-bold btn-primary",
@@ -348,7 +345,7 @@ var KTCategoryTypesListDatatable = (function () {
                                         response.message || "An error occurred",
                                     icon: "error",
                                     buttonsStyling: false,
-                                    confirmButtonText: "Ok, got it!",
+                                    confirmButtonText: "Ok, baik!",
                                     customClass: {
                                         confirmButton:
                                             "btn fw-bold btn-primary",
@@ -370,13 +367,13 @@ var KTCategoryTypesListDatatable = (function () {
 
                 const categoryTypeId = $(this).attr("data-category-type-id");
 
-                // Load category type data for editing
+                // Load data for editing
                 loadCategoryTypeForEdit(categoryTypeId);
             }
         );
     };
 
-    // Load category type data for editing
+    // Load data for editing
     var loadCategoryTypeForEdit = function (categoryTypeId) {
         $.ajax({
             url: route("finance.category-types.show", categoryTypeId),
@@ -388,7 +385,7 @@ var KTCategoryTypesListDatatable = (function () {
                 if (response.success) {
                     const categoryType = response.data;
 
-                    // Fill the update modal with category type data
+                    // Fill the update modal with data
                     $(
                         '#kt_modal_update_category_type_form input[name="name"]'
                     ).val(categoryType.name);
@@ -407,7 +404,7 @@ var KTCategoryTypesListDatatable = (function () {
                         text: response.message,
                         icon: "error",
                         buttonsStyling: false,
-                        confirmButtonText: "Ok, got it!",
+                        confirmButtonText: "Ok, baik!",
                         customClass: {
                             confirmButton: "btn fw-bold btn-primary",
                         },
@@ -420,7 +417,7 @@ var KTCategoryTypesListDatatable = (function () {
                     text: response.message || "An error occurred",
                     icon: "error",
                     buttonsStyling: false,
-                    confirmButtonText: "Ok, got it!",
+                    confirmButtonText: "Ok, baik!",
                     customClass: {
                         confirmButton: "btn fw-bold btn-primary",
                     },
@@ -542,7 +539,9 @@ var KTCategoryTypesListDatatable = (function () {
                     if (result.value) {
                         // Delete selected category types via AJAX
                         $.ajax({
-                            url: route("finance.category-types.destroy-multiple"),
+                            url: route(
+                                "finance.category-types.destroy-multiple"
+                            ),
                             type: "DELETE",
                             data: {
                                 ids: selectedIds,
@@ -559,7 +558,7 @@ var KTCategoryTypesListDatatable = (function () {
                                         text: response.message,
                                         icon: "success",
                                         buttonsStyling: false,
-                                        confirmButtonText: "Ok, got it!",
+                                        confirmButtonText: "Ok, baik!",
                                         customClass: {
                                             confirmButton:
                                                 "btn fw-bold btn-primary",
@@ -572,7 +571,7 @@ var KTCategoryTypesListDatatable = (function () {
                                         text: response.message,
                                         icon: "error",
                                         buttonsStyling: false,
-                                        confirmButtonText: "Ok, got it!",
+                                        confirmButtonText: "Ok, baik!",
                                         customClass: {
                                             confirmButton:
                                                 "btn fw-bold btn-primary",
@@ -587,7 +586,7 @@ var KTCategoryTypesListDatatable = (function () {
                                         response.message || "An error occurred",
                                     icon: "error",
                                     buttonsStyling: false,
-                                    confirmButtonText: "Ok, got it!",
+                                    confirmButtonText: "Ok, baik!",
                                     customClass: {
                                         confirmButton:
                                             "btn fw-bold btn-primary",
@@ -637,11 +636,11 @@ var KTCategoryTypesListDatatable = (function () {
     };
 })();
 
-// Category Type Modal Handlers
+// Modal Handlers
 var KTCategoryTypesModal = (function () {
     var submitAddButton;
 
-    // Init add category type modal
+    // Init add modal
     var initAddCategoryType = function () {
         // Submit button handler
         submitAddButton = document.querySelector(
@@ -661,10 +660,10 @@ var KTCategoryTypesModal = (function () {
             );
             if (!nameInput.value.trim()) {
                 Swal.fire({
-                    text: "Nama category type harus diisi",
+                    text: "Nama harus diisi",
                     icon: "error",
                     buttonsStyling: false,
-                    confirmButtonText: "Ok, got it!",
+                    confirmButtonText: "Ok, baik!",
                     customClass: {
                         confirmButton: "btn fw-bold btn-primary",
                     },
@@ -703,7 +702,7 @@ var KTCategoryTypesModal = (function () {
                             text: response.message,
                             icon: "success",
                             buttonsStyling: false,
-                            confirmButtonText: "Ok, got it!",
+                            confirmButtonText: "Ok, baik!",
                             customClass: {
                                 confirmButton: "btn fw-bold btn-primary",
                             },
@@ -713,7 +712,9 @@ var KTCategoryTypesModal = (function () {
 
                             // Reset form
                             document
-                                .getElementById("kt_modal_add_category_type_form")
+                                .getElementById(
+                                    "kt_modal_add_category_type_form"
+                                )
                                 .reset();
                             clearFormErrors();
 
@@ -729,7 +730,7 @@ var KTCategoryTypesModal = (function () {
                             text: response.message,
                             icon: "error",
                             buttonsStyling: false,
-                            confirmButtonText: "Ok, got it!",
+                            confirmButtonText: "Ok, baik!",
                             customClass: {
                                 confirmButton: "btn fw-bold btn-primary",
                             },
@@ -751,8 +752,8 @@ var KTCategoryTypesModal = (function () {
                             );
                             const errorContainer = input
                                 ? input.parentNode.querySelector(
-                                      ".invalid-feedback"
-                                  )
+                                    ".invalid-feedback"
+                                )
                                 : null;
 
                             if (input && errorContainer) {
@@ -771,7 +772,7 @@ var KTCategoryTypesModal = (function () {
                             text: errorMessage,
                             icon: "error",
                             buttonsStyling: false,
-                            confirmButtonText: "Ok, got it!",
+                            confirmButtonText: "Ok, baik!",
                             customClass: {
                                 confirmButton: "btn fw-bold btn-primary",
                             },
@@ -783,7 +784,7 @@ var KTCategoryTypesModal = (function () {
                             text: errorMessage,
                             icon: "error",
                             buttonsStyling: false,
-                            confirmButtonText: "Ok, got it!",
+                            confirmButtonText: "Ok, baik!",
                             customClass: {
                                 confirmButton: "btn fw-bold btn-primary",
                             },
@@ -867,7 +868,7 @@ var KTCategoryTypesModal = (function () {
             });
     };
 
-    // Init update category type modal
+    // Init update modal
     var initUpdateCategoryType = function () {
         // Submit button handler
         document
@@ -922,13 +923,15 @@ var KTCategoryTypesModal = (function () {
                                 text: response.message,
                                 icon: "success",
                                 buttonsStyling: false,
-                                confirmButtonText: "Ok, got it!",
+                                confirmButtonText: "Ok, baik!",
                                 customClass: {
                                     confirmButton: "btn fw-bold btn-primary",
                                 },
                             }).then(function () {
                                 // Hide modal
-                                $("#kt_modal_update_category_type").modal("hide");
+                                $("#kt_modal_update_category_type").modal(
+                                    "hide"
+                                );
 
                                 // Reload datatable
                                 KTCategoryTypesListDatatable.refresh();
@@ -938,7 +941,7 @@ var KTCategoryTypesModal = (function () {
                                 text: response.message,
                                 icon: "error",
                                 buttonsStyling: false,
-                                confirmButtonText: "Ok, got it!",
+                                confirmButtonText: "Ok, baik!",
                                 customClass: {
                                     confirmButton: "btn fw-bold btn-primary",
                                 },
@@ -971,7 +974,7 @@ var KTCategoryTypesModal = (function () {
                             text: errorMessage,
                             icon: "error",
                             buttonsStyling: false,
-                            confirmButtonText: "Ok, got it!",
+                            confirmButtonText: "Ok, baik!",
                             customClass: {
                                 confirmButton: "btn fw-bold btn-primary",
                             },
