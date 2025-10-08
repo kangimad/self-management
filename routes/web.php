@@ -65,24 +65,27 @@ Route::middleware(['auth', 'verified'])->prefix('finance')->name('finance.')->gr
     });
 
     // Category Type routes
-    Route::middleware('permission:finance-category-type-list')->name('category-types.')->group(function () {
-        Route::get('/category-types', [\App\Http\Controllers\Finance\FinanceCategoryTypeController::class, 'index'])->name('index');
-        Route::get('/datatable', [\App\Http\Controllers\Finance\FinanceCategoryTypeController::class, 'datatable'])->name('datatable');
-        Route::get('/category-types/{categoryType}', [\App\Http\Controllers\Finance\FinanceCategoryTypeController::class, 'show'])->name('show');
-    });
+    Route::prefix('category-types')->name('category-types.')->group(function () {
+        Route::middleware('permission:finance-category-type-list')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Finance\FinanceCategoryTypeController::class, 'index'])->name('index');
+            Route::get('/datatable', [\App\Http\Controllers\Finance\FinanceCategoryTypeController::class, 'datatable'])->name('datatable');
+            Route::get('/{result}', [\App\Http\Controllers\Finance\FinanceCategoryTypeController::class, 'show'])->name('show');
+        });
 
-    Route::middleware('permission:finance-category-type-create')->group(function () {
-        Route::get('/category-types/create', [\App\Http\Controllers\Finance\FinanceCategoryTypeController::class, 'create'])->name('category-types.create');
-        Route::post('/category-types', [\App\Http\Controllers\Finance\FinanceCategoryTypeController::class, 'store'])->name('category-types.store');
-    });
+        Route::middleware('permission:finance-category-type-create')->group(function () {
+            Route::get('/create', [\App\Http\Controllers\Finance\FinanceCategoryTypeController::class, 'create'])->name('create');
+            Route::post('/', [\App\Http\Controllers\Finance\FinanceCategoryTypeController::class, 'store'])->name('store');
+        });
 
-    Route::middleware('permission:finance-category-type-edit')->group(function () {
-        Route::get('/category-types/{categoryType}/edit', [\App\Http\Controllers\Finance\FinanceCategoryTypeController::class, 'edit'])->name('category-types.edit');
-        Route::patch('/category-types/{categoryType}', [\App\Http\Controllers\Finance\FinanceCategoryTypeController::class, 'update'])->name('category-types.update');
-    });
+        Route::middleware('permission:finance-category-type-edit')->group(function () {
+            Route::get('/{result}/edit', [\App\Http\Controllers\Finance\FinanceCategoryTypeController::class, 'edit'])->name('edit');
+            Route::put('/{result}', [\App\Http\Controllers\Finance\FinanceCategoryTypeController::class, 'update'])->name('update');
+        });
 
-    Route::middleware('permission:finance-category-type-delete')->group(function () {
-        Route::delete('/category-types/{categoryType}', [\App\Http\Controllers\Finance\FinanceCategoryTypeController::class, 'destroy'])->name('category-types.destroy');
+        Route::middleware('permission:finance-category-type-delete')->group(function () {
+            Route::delete('/{result}', [\App\Http\Controllers\Finance\FinanceCategoryTypeController::class, 'destroy'])->name('destroy');
+            Route::delete('/', [\App\Http\Controllers\Finance\FinanceCategoryTypeController::class, 'destroyMultiple'])->name('destroy-multiple');
+        });
     });
 
     // Source routes

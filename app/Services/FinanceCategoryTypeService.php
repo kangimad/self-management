@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Finance\FinanceCategoryType;
+use App\Models\Finance\FinanceSourceType;
 use App\Repositories\FinanceCategoryTypeRepository;
 use Exception;
 
@@ -131,16 +132,47 @@ class FinanceCategoryTypeService
 
     public function create(array $data)
     {
+        // Check if data already exists
+        if ($this->financeCategoryTypeRepository->existsByName($data['name'])) {
+            throw new Exception('Nama tersebut sudah ada.');
+        }
         return $this->financeCategoryTypeRepository->create($data);
     }
 
-    public function update($id, array $data)
+    public function update(FinanceCategoryType $result, array $data): bool
     {
-        return $this->financeCategoryTypeRepository->update($id, $data);
+        // Check if data already exists (excluding current data)
+        if ($this->financeCategoryTypeRepository->existsByName($data['name'], $result->id)) {
+            throw new Exception('Nama tersebut sudah ada.');
+        }
+
+        return $this->financeCategoryTypeRepository->update($result, $data);
     }
 
-    public function delete($id)
+    public function delete(FinanceCategoryType $result): bool
     {
-        return $this->financeCategoryTypeRepository->delete($id);
+        // Check if result is assigned to any categories
+        if ($result->categories()->count() > 0) {
+            throw new Exception('Data tidak dapat dihapus karena masih digunakan oleh kategori.');
+        }
+
+        return $this->financeCategoryTypeRepository->delete($result);
+    }
+
+    public function deleteMultiple(array $ids): bool
+    {
+        // Check if any result are assigned to categories
+        $result = FinanceCategoryType::whereIn('id', $ids)->with('categories')->get();
+
+        $assignedResult = $result->filter(function ($financeCategoryType) {
+            return $financeCategoryType->categories()->count() > 0;
+        });
+
+        if ($assignedResult->count() > 0) {
+            $names = $assignedResult->pluck('name')->implode(', ');
+            throw new Exception("Data berikut tidak dapat dihapus karena masih digunakan oleh kategori: {$names}");
+        }
+
+        return $this->financeCategoryTypeRepository->deleteMultiple($ids);
     }
 }

@@ -542,7 +542,7 @@ var KTCategoryTypesListDatatable = (function () {
                     if (result.value) {
                         // Delete selected category types via AJAX
                         $.ajax({
-                            url: route("setting.permission.destroy.multiple"),
+                            url: route("finance.category-types.destroy-multiple"),
                             type: "DELETE",
                             data: {
                                 ids: selectedIds,
@@ -640,12 +640,6 @@ var KTCategoryTypesListDatatable = (function () {
 // Category Type Modal Handlers
 var KTCategoryTypesModal = (function () {
     var submitAddButton;
-    var submitUpdateButton;
-    var cancelButton;
-    var closeButton;
-    var validator;
-    var form;
-    var modal;
 
     // Init add category type modal
     var initAddCategoryType = function () {
@@ -715,16 +709,16 @@ var KTCategoryTypesModal = (function () {
                             },
                         }).then(function () {
                             // Hide modal
-                            $("#kt_modal_add_permission").modal("hide");
+                            $("#kt_modal_add_category_type").modal("hide");
 
                             // Reset form
                             document
-                                .getElementById("kt_modal_add_permission_form")
+                                .getElementById("kt_modal_add_category_type_form")
                                 .reset();
                             clearFormErrors();
 
                             // Reload datatable
-                            KTPermissionsListDatatable.refresh();
+                            KTCategoryTypesListDatatable.refresh();
                         });
                     } else {
                         // Hide loading indication
@@ -753,7 +747,7 @@ var KTCategoryTypesModal = (function () {
                         // Display field-specific errors
                         Object.keys(response.errors).forEach(function (field) {
                             const input = document.querySelector(
-                                `#kt_modal_add_permission_form input[name="${field}"]`
+                                `#kt_modal_add_category_type_form input[name="${field}"]`
                             );
                             const errorContainer = input
                                 ? input.parentNode.querySelector(
@@ -934,10 +928,10 @@ var KTCategoryTypesModal = (function () {
                                 },
                             }).then(function () {
                                 // Hide modal
-                                $("#kt_modal_update_permission").modal("hide");
+                                $("#kt_modal_update_category_type").modal("hide");
 
                                 // Reload datatable
-                                KTPermissionsListDatatable.refresh();
+                                KTCategoryTypesListDatatable.refresh();
                             });
                         } else {
                             Swal.fire({

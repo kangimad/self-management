@@ -25,18 +25,38 @@ class FinanceCategoryTypeRepository
 
     public function create(array $data)
     {
-        return FinanceCategoryType::create($data);
+        return FinanceCategoryType::create([
+            'name' => $data['name'],
+            'description' => $data['description'] ?? null,
+        ]);
     }
 
-    public function update($id, array $data)
+    public function update(FinanceCategoryType $result, array $data): bool
     {
-        $model = FinanceCategoryType::findOrFail($id);
-        $model->update($data);
-        return $model;
+        return $result->update([
+            'name' => $data['name'],
+            'description' => $data['description'] ?? null,
+        ]);
     }
 
-    public function delete($id)
+    public function delete(FinanceCategoryType $result): bool
     {
-        return FinanceCategoryType::destroy($id);
+        return $result->delete();
+    }
+
+    public function deleteMultiple(array $ids): bool
+    {
+        return FinanceCategoryType::whereIn('id', $ids)->delete();
+    }
+
+    public function existsByName(string $name, ?int $excludeId = null): bool
+    {
+        $query = FinanceCategoryType::where('name', $name);
+
+        if ($excludeId) {
+            $query->where('id', '!=', $excludeId);
+        }
+
+        return $query->exists();
     }
 }
