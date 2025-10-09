@@ -57,6 +57,7 @@
                         </div>
                         <!--end::Col-->
                     @endcan
+
                     @can('finance-category-list')
                         <!--begin::Col-->
                         <div class="col-12">
@@ -93,6 +94,49 @@
 
                                 <!--begin::Label-->
                                 <span class="fs-7 fw-bold">Category Type</span>
+                                <!--end::Label-->
+                            </a>
+                            <!--end::Link-->
+                        </div>
+                        <!--end::Col-->
+                    @endcan
+
+                    @can('finance-source-list')
+                        <!--begin::Col-->
+                        <div class="col-12">
+                            <!--begin::Link-->
+                            <a href="{{ route('finance.sources.index') }}"
+                                class="btn btn-icon btn-outline btn-bg-light {{ request()->routeIs('finance.sources.index') ? 'btn-light-primary' : '' }} btn-flex justify-content-start w-100 h-100 border-gray-200 p-3"
+                                data-kt-button="true">
+                                <!--begin::Icon-->
+                                <span class="me-2">
+                                    <i class="ki-outline ki-abstract-26 fs-1"></i>
+                                </span>
+                                <!--end::Icon-->
+
+                                <!--begin::Label-->
+                                <span class="fs-7 fw-bold">Source</span>
+                                <!--end::Label-->
+                            </a>
+                            <!--end::Link-->
+                        </div>
+                        <!--end::Col-->
+                    @endcan
+                    @can('finance-source-type-list')
+                        <!--begin::Col-->
+                        <div class="col-12">
+                            <!--begin::Link-->
+                            <a href="{{ route('finance.source-types.index') }}"
+                                class="btn btn-icon btn-outline btn-bg-light {{ request()->routeIs('finance.source-types.index') ? 'btn-light-primary' : '' }} btn-flex justify-content-start w-100 h-100 border-gray-200 p-3"
+                                data-kt-button="true">
+                                <!--begin::Icon-->
+                                <span class="me-2">
+                                    <i class="ki-outline ki-abstract-26 fs-1"></i>
+                                </span>
+                                <!--end::Icon-->
+
+                                <!--begin::Label-->
+                                <span class="fs-7 fw-bold">Source Type</span>
                                 <!--end::Label-->
                             </a>
                             <!--end::Link-->

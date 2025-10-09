@@ -92,24 +92,52 @@ Route::middleware(['auth', 'verified'])->prefix('finance')->name('finance.')->gr
         });
     });
 
-    // Source routes
-    Route::middleware('permission:finance-source-list')->group(function () {
-        Route::get('/sources', [\App\Http\Controllers\Finance\FinanceSourceController::class, 'index'])->name('sources.index');
-        Route::get('/sources/{source}', [\App\Http\Controllers\Finance\FinanceSourceController::class, 'show'])->name('sources.show');
+    // Sources routes
+    Route::prefix('sources')->name('sources.')->group(function () {
+        Route::middleware('permission:finance-source-list')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Finance\FinanceSourceController::class, 'index'])->name('index');
+            Route::get('/datatable', [\App\Http\Controllers\Finance\FinanceSourceController::class, 'datatable'])->name('datatable');
+            Route::get('/{result}', [\App\Http\Controllers\Finance\FinanceSourceController::class, 'show'])->name('show');
+        });
+
+        Route::middleware('permission:finance-source-create')->group(function () {
+            Route::get('/create', [\App\Http\Controllers\Finance\FinanceSourceController::class, 'create'])->name('create');
+            Route::post('/', [\App\Http\Controllers\Finance\FinanceSourceController::class, 'store'])->name('store');
+        });
+
+        Route::middleware('permission:finance-source-edit')->group(function () {
+            Route::get('/{result}/edit', [\App\Http\Controllers\Finance\FinanceSourceController::class, 'edit'])->name('edit');
+            Route::put('/{result}', [\App\Http\Controllers\Finance\FinanceSourceController::class, 'update'])->name('update');
+        });
+
+        Route::middleware('permission:finance-source-delete')->group(function () {
+            Route::delete('/{result}', [\App\Http\Controllers\Finance\FinanceSourceController::class, 'destroy'])->name('destroy');
+            Route::delete('/', [\App\Http\Controllers\Finance\FinanceSourceController::class, 'destroyMultiple'])->name('destroy-multiple');
+        });
     });
 
-    Route::middleware('permission:finance-source-create')->group(function () {
-        Route::get('/sources/create', [\App\Http\Controllers\Finance\FinanceSourceController::class, 'create'])->name('sources.create');
-        Route::post('/sources', [\App\Http\Controllers\Finance\FinanceSourceController::class, 'store'])->name('sources.store');
-    });
+    // Source Type routes
+    Route::prefix('source-types')->name('source-types.')->group(function () {
+        Route::middleware('permission:finance-source-type-list')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Finance\FinanceSourceTypeController::class, 'index'])->name('index');
+            Route::get('/datatable', [\App\Http\Controllers\Finance\FinanceSourceTypeController::class, 'datatable'])->name('datatable');
+            Route::get('/{result}', [\App\Http\Controllers\Finance\FinanceSourceTypeController::class, 'show'])->name('show');
+        });
 
-    Route::middleware('permission:finance-source-edit')->group(function () {
-        Route::get('/sources/{source}/edit', [\App\Http\Controllers\Finance\FinanceSourceController::class, 'edit'])->name('sources.edit');
-        Route::patch('/sources/{source}', [\App\Http\Controllers\Finance\FinanceSourceController::class, 'update'])->name('sources.update');
-    });
+        Route::middleware('permission:finance-source-type-create')->group(function () {
+            Route::get('/create', [\App\Http\Controllers\Finance\FinanceSourceTypeController::class, 'create'])->name('create');
+            Route::post('/', [\App\Http\Controllers\Finance\FinanceSourceTypeController::class, 'store'])->name('store');
+        });
 
-    Route::middleware('permission:finance-source-delete')->group(function () {
-        Route::delete('/sources/{source}', [\App\Http\Controllers\Finance\FinanceSourceController::class, 'destroy'])->name('sources.destroy');
+        Route::middleware('permission:finance-source-type-edit')->group(function () {
+            Route::get('/{result}/edit', [\App\Http\Controllers\Finance\FinanceSourceTypeController::class, 'edit'])->name('edit');
+            Route::put('/{result}', [\App\Http\Controllers\Finance\FinanceSourceTypeController::class, 'update'])->name('update');
+        });
+
+        Route::middleware('permission:finance-source-type-delete')->group(function () {
+            Route::delete('/{result}', [\App\Http\Controllers\Finance\FinanceSourceTypeController::class, 'destroy'])->name('destroy');
+            Route::delete('/', [\App\Http\Controllers\Finance\FinanceSourceTypeController::class, 'destroyMultiple'])->name('destroy-multiple');
+        });
     });
 
     // Balance routes

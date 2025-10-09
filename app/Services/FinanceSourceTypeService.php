@@ -2,22 +2,22 @@
 
 namespace App\Services;
 
-use App\Models\Finance\FinanceCategoryType;
-use App\Repositories\FinanceCategoryTypeRepository;
 use Exception;
+use App\Models\Finance\FinanceSourceType;
+use App\Repositories\FinanceSourceTypeRepository;
 
-class FinanceCategoryTypeService
+class FinanceSourceTypeService
 {
-    protected $financeCategoryTypeRepository;
+    protected $financeSourceTypeRepository;
 
-    public function __construct(FinanceCategoryTypeRepository $financeCategoryTypeRepository)
+    public function __construct(FinanceSourceTypeRepository $financeSourceTypeRepository)
     {
-        $this->financeCategoryTypeRepository = $financeCategoryTypeRepository;
+        $this->financeSourceTypeRepository = $financeSourceTypeRepository;
     }
 
     public function getAll()
     {
-        return $this->financeCategoryTypeRepository->all();
+        return $this->financeSourceTypeRepository->all();
     }
 
     public function datatable($request)
@@ -28,7 +28,7 @@ class FinanceCategoryTypeService
             $length = $request->get('length', 10);
             $searchValue = $request->get('search')['value'] ?? '';
 
-            $query = $this->financeCategoryTypeRepository->datatable();
+            $query = $this->financeSourceTypeRepository->datatable();
 
             // Apply search filter
             if (!empty($searchValue)) {
@@ -50,7 +50,7 @@ class FinanceCategoryTypeService
                         0 => null, // checkbox column - not sortable
                         1 => null, // index column - not sortable
                         2 => 'name',
-                        3 => 'categories', // This will be handled specially
+                        3 => 'sources', // This will be handled specially
                         4 => 'created_at',
                         5 => null, // actions column - not sortable
                     ];
@@ -58,9 +58,9 @@ class FinanceCategoryTypeService
                     if (isset($columns[$columnIndex]) && $columns[$columnIndex] !== null) {
                         $columnName = $columns[$columnIndex];
 
-                        if ($columnName === 'categories') {
-                            // For categories column, order by the count of categories
-                            $query->withCount('categories')->orderBy('categories_count', $direction);
+                        if ($columnName === 'sources') {
+                            // For sources column, order by the count of sources
+                            $query->withCount('sources')->orderBy('sources_count', $direction);
                         } else {
                             $query->orderBy($columnName, $direction);
                         }
@@ -76,33 +76,33 @@ class FinanceCategoryTypeService
             }
 
             // Get total records count
-            $totalRecords = FinanceCategoryType::count();
+            $totalRecords = FinanceSourceType::count();
 
             // Get filtered records count
             $filteredQuery = clone $query;
             $filteredRecords = $filteredQuery->count();
 
             // Apply pagination
-            $categoryTypes = $query->offset($start)->limit($length)->get();
+            $results = $query->offset($start)->limit($length)->get();
 
             $data = [];
-            foreach ($categoryTypes as $index => $categoryType) {
-                $categories = $categoryType->categories->map(function ($category) {
-                    return '<span class="badge badge-light-primary fs-7 m-1">' . $category->name . '</span>';
+            foreach ($results as $index => $result) {
+                $sources = $result->sources->map(function ($source) {
+                    return '<span class="badge badge-light-primary fs-7 m-1">' . $source->name . '</span>';
                 })->implode(' ');
 
-                if (empty($categories)) {
-                    $categories = '<span class="text-muted">Tidak ada kategori</span>';
+                if (empty($sources)) {
+                    $sources = '<span class="text-muted">Tidak ada kategori</span>';
                 }
 
-                $actions = view('dashboard.pages.finances.category-types.partials.actions', compact('categoryType'))->render();
+                $actions = view('dashboard.pages.finances.source-types.partials.actions', compact('result'))->render();
 
                 $data[] = [
-                    'id' => $categoryType->id,
-                    'name' => $categoryType->name,
-                    'description' => $categoryType->description,
-                    'categories' => $categories,
-                    'created_at' => $categoryType->created_at ? $categoryType->created_at->format('d M Y, H:i') : '-',
+                    'id' => $result->id,
+                    'name' => $result->name,
+                    'description' => $result->description,
+                    'sources' => $sources,
+                    'created_at' => $result->created_at ? $result->created_at->format('d M Y, H:i') : '-',
                     'actions' => $actions
                 ];
             }
@@ -126,45 +126,45 @@ class FinanceCategoryTypeService
 
     public function find($id)
     {
-        return $this->financeCategoryTypeRepository->find($id);
+        return $this->financeSourceTypeRepository->find($id);
     }
 
     public function create(array $data)
     {
         // Check if data already exists
-        if ($this->financeCategoryTypeRepository->existsByName($data['name'])) {
+        if ($this->financeSourceTypeRepository->existsByName($data['name'])) {
             throw new Exception('Nama tersebut sudah ada.');
         }
-        return $this->financeCategoryTypeRepository->create($data);
+        return $this->financeSourceTypeRepository->create($data);
     }
 
-    public function update(FinanceCategoryType $result, array $data): bool
+    public function update(FinanceSourceType $result, array $data): bool
     {
         // Check if data already exists (excluding current data)
-        if ($this->financeCategoryTypeRepository->existsByName($data['name'], $result->id)) {
+        if ($this->financeSourceTypeRepository->existsByName($data['name'], $result->id)) {
             throw new Exception('Nama tersebut sudah ada.');
         }
 
-        return $this->financeCategoryTypeRepository->update($result, $data);
+        return $this->financeSourceTypeRepository->update($result, $data);
     }
 
-    public function delete(FinanceCategoryType $result): bool
+    public function delete(FinanceSourceType $result): bool
     {
-        // Check if result is assigned to any categories
-        if ($result->categories()->count() > 0) {
+        // Check if result is assigned to any sources
+        if ($result->sources()->count() > 0) {
             throw new Exception('Data tidak dapat dihapus karena masih digunakan oleh kategori.');
         }
 
-        return $this->financeCategoryTypeRepository->delete($result);
+        return $this->financeSourceTypeRepository->delete($result);
     }
 
     public function deleteMultiple(array $ids): bool
     {
-        // Check if any result are assigned to categories
-        $result = FinanceCategoryType::whereIn('id', $ids)->with('categories')->get();
+        // Check if any result are assigned to sources
+        $result = FinanceSourceType::whereIn('id', $ids)->with('sources')->get();
 
-        $assignedResult = $result->filter(function ($financeCategoryType) {
-            return $financeCategoryType->categories()->count() > 0;
+        $assignedResult = $result->filter(function ($financeSourceType) {
+            return $financeSourceType->sources()->count() > 0;
         });
 
         if ($assignedResult->count() > 0) {
@@ -172,6 +172,6 @@ class FinanceCategoryTypeService
             throw new Exception("Data berikut tidak dapat dihapus karena masih digunakan oleh kategori: {$names}");
         }
 
-        return $this->financeCategoryTypeRepository->deleteMultiple($ids);
+        return $this->financeSourceTypeRepository->deleteMultiple($ids);
     }
 }

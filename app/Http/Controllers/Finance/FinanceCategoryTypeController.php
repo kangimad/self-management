@@ -10,7 +10,6 @@ use App\Models\Finance\FinanceCategoryType;
 use App\Services\FinanceCategoryTypeService;
 use App\Http\Requests\Finance\FinanceCategoryTypeStoreRequest;
 use App\Http\Requests\Finance\FinanceCategoryTypeUpdateRequest;
-use App\Models\Finance\FinanceTransactionType;
 
 class FinanceCategoryTypeController extends Controller
 {

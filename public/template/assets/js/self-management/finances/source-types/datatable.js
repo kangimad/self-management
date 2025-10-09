@@ -33,17 +33,17 @@ var KTListDatatable = (function () {
                     { orderable: false, targets: 0 }, // Disable ordering on column 0 (checkbox)
                     { orderable: false, targets: 1 }, // Disable ordering on column 1 (index)
                     { orderable: true, targets: 2 }, // Enable ordering on column 2 (name)
-                    { orderable: true, targets: 3 }, // Enable ordering on column 3 (categories)
+                    { orderable: true, targets: 3 }, // Enable ordering on column 3 (sources)
                     { orderable: true, targets: 4 }, // Enable ordering on column 4 (created_at)
-                    { orderable: false, targets: 6 }, // Disable ordering on column 6 (actions)
+                    { orderable: false, targets: 5 }, // Disable ordering on column 5 (actions)
                     { searchable: false, targets: 0 }, // Disable searching on checkbox column
                     { searchable: false, targets: 1 }, // Disable searching on index column
-                    { searchable: false, targets: 6 }, // Disable searching on actions column
+                    { searchable: false, targets: 5 }, // Disable searching on actions column
                 ],
                 processing: true,
                 serverSide: true,
                 ajax: {
-                    url: route("finance.categories.datatable"),
+                    url: route("finance.source-types.datatable"),
                     type: "GET",
                     headers: {
                         "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
@@ -131,16 +131,7 @@ var KTListDatatable = (function () {
                         },
                     },
                     {
-                        data: "categoryType",
-                        render: function (data, type, row) {
-                            if (!data) {
-                                return '<span class="text-muted">Tidak ada tipe</span>';
-                            }
-                            return data;
-                        },
-                    },
-                    {
-                        data: "user",
+                        data: "sources",
                         render: function (data, type, row) {
                             if (!data) {
                                 return '<span class="text-muted">Tidak ada tipe</span>';
@@ -298,7 +289,7 @@ var KTListDatatable = (function () {
                         // Delete via AJAX
                         $.ajax({
                             url: route(
-                                "finance.categories.destroy",
+                                "finance.source-types.destroy",
                                 categoryId
                             ),
                             type: "DELETE",
@@ -373,7 +364,7 @@ var KTListDatatable = (function () {
     // Load data for editing
     var loadFirstRecordForEdit = function (categoryId) {
         $.ajax({
-            url: route("finance.categories.show", categoryId),
+            url: route("finance.source-types.show", categoryId),
             type: "GET",
             headers: {
                 "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
@@ -392,45 +383,6 @@ var KTListDatatable = (function () {
                     $("#kt_modal_update_first_record").attr(
                         "data-first-record-id",
                         firstRecord.id
-                    );
-
-                    // === Pastikan Select2 hanya diinisialisasi sekali dan nilainya terset ===
-                    const categorySelect = $(
-                        '#kt_modal_update_first_record_form select[name="category_type_id"]'
-                    );
-
-                    // Inisialisasi atau refresh Select2
-                    if (!categorySelect.hasClass("select2-hidden-accessible")) {
-                        // Jika belum pernah diinisialisasi
-                        categorySelect.select2({
-                            dropdownParent: $("#kt_modal_update_first_record"),
-                            width: "100%",
-                            allowClear: true,
-                            placeholder: "Select an option",
-                        });
-                    } else {
-                        // Jika sudah pernah, reset dulu untuk hindari duplikasi dropdown
-                        categorySelect.select2("destroy").select2({
-                            dropdownParent: $("#kt_modal_update_first_record"),
-                            width: "100%",
-                            allowClear: true,
-                            placeholder: "Select an option",
-                        });
-                    }
-
-                    // Tunggu modal selesai ditampilkan, baru set value Select2
-                    $("#kt_modal_update_first_record").one(
-                        "shown.bs.modal",
-                        function () {
-                            // Set value meskipun nilainya sama
-                            categorySelect
-                                .val(firstRecord.category_type_id ?? "")
-                                .trigger("change.select2");
-                            // Trigger event agar HTML5 required mengenali perubahan
-                            categorySelect[0].dispatchEvent(
-                                new Event("change", { bubbles: true })
-                            );
-                        }
                     );
 
                     // Show modal (ini memicu event di atas)
@@ -575,7 +527,7 @@ var KTListDatatable = (function () {
                     if (result.value) {
                         // Delete selected datas via AJAX
                         $.ajax({
-                            url: route("finance.categories.destroy-multiple"),
+                            url: route("finance.source-types.destroy-multiple"),
                             type: "DELETE",
                             data: {
                                 ids: selectedIds,
@@ -671,7 +623,7 @@ var KTListDatatable = (function () {
 })();
 
 // Modal Handlers
-var KTCategoriesModal = (function () {
+var KTFirstRecordModal = (function () {
     var submitAddButton;
 
     // Init add modal
@@ -715,7 +667,7 @@ var KTCategoriesModal = (function () {
             );
 
             $.ajax({
-                url: route("finance.categories.store"),
+                url: route("finance.source-types.store"),
                 type: "POST",
                 data: formData,
                 processData: false,
@@ -925,7 +877,7 @@ var KTCategoriesModal = (function () {
                 this.disabled = true;
 
                 $.ajax({
-                    url: route("finance.categories.update", categoryId),
+                    url: route("finance.source-types.update", categoryId),
                     type: "PUT",
                     data: {
                         name: formData.get("name"),
@@ -1043,7 +995,7 @@ var KTCategoriesModal = (function () {
 // On document ready
 KTUtil.onDOMContentLoaded(function () {
     KTListDatatable.init();
-    KTCategoriesModal.init();
+    KTFirstRecordModal.init();
 });
 
 // Alternative initialization if KTUtil is not available

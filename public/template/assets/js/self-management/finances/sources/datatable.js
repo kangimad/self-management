@@ -131,7 +131,7 @@ var KTListDatatable = (function () {
                         },
                     },
                     {
-                        data: "categoryType",
+                        data: "sourceType",
                         render: function (data, type, row) {
                             if (!data) {
                                 return '<span class="text-muted">Tidak ada tipe</span>';
