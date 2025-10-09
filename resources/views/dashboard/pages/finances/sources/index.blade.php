@@ -163,7 +163,7 @@
         </div>
         <!--end::Card-->
         <!--begin::Modals-->
-        <!--begin::Modal - Add category-->
+        <!--begin::Modal - Add source-->
         <div class="modal fade" id="kt_modal_add_first_record" tabindex="-1" aria-hidden="true">
             <!--begin::Modal dialog-->
             <div class="modal-dialog modal-dialog-centered mw-650px">
@@ -220,9 +220,9 @@
                                 <!--end::Label-->
                                 <!--begin::Select-->
                                 <select class="form-select form-select-solid" data-control="select2"
-                                    data-placeholder="Select an option" data-allow-clear="true" name="category_type_id"
+                                    data-placeholder="Select an option" data-allow-clear="true" name="source_type_id"
                                     required>
-                                    <option></option>
+                                    <option>--Pilih--</option>
                                     @foreach ($types as $type)
                                         <option value="{{ $type->id }}">{{ $type->name }}</option>
                                     @endforeach
@@ -276,8 +276,8 @@
             </div>
             <!--end::Modal dialog-->
         </div>
-        <!--end::Modal - Add category type-->
-        <!--begin::Modal - Update category type-->
+        <!--end::Modal - Add source type-->
+        <!--begin::Modal - Update source type-->
         <div class="modal fade" id="kt_modal_update_first_record" tabindex="-1" aria-hidden="true">
             <!--begin::Modal dialog-->
             <div class="modal-dialog modal-dialog-centered mw-650px">
@@ -334,9 +334,9 @@
                                 <!--end::Label-->
                                 <!--begin::Select-->
                                 <select class="form-select form-select-solid" data-control="select2"
-                                    data-placeholder="Select an option" data-allow-clear="true" name="category_type_id"
+                                    data-placeholder="Select an option" data-allow-clear="true" name="source_type_id"
                                     required>
-                                    <option></option>
+                                    <option>--Pilih--</option>
                                     @foreach ($types as $type)
                                         <option value="{{ $type->id }}">{{ $type->name }}</option>
                                     @endforeach
@@ -409,5 +409,5 @@
 @endpush
 
 @push('custom-script')
-    <script src="{{ asset('template/assets/js/self-management/finances/categories/datatable.js') }}"></script>
+    <script src="{{ asset('template/assets/js/self-management/finances/sources/datatable.js') }}"></script>
 @endpush

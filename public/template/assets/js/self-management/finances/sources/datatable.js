@@ -43,7 +43,7 @@ var KTListDatatable = (function () {
                 processing: true,
                 serverSide: true,
                 ajax: {
-                    url: route("finance.categories.datatable"),
+                    url: route("finance.sources.datatable"),
                     type: "GET",
                     headers: {
                         "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
@@ -108,7 +108,7 @@ var KTListDatatable = (function () {
                         searchable: false,
                         render: function (data, type, row) {
                             return `<div class="form-check form-check-sm form-check-custom form-check-solid">
-                                    <input class="form-check-input category-type-checkbox" type="checkbox" value="${row.id}" />
+                                    <input class="form-check-input first-record-type-checkbox" type="checkbox" value="${row.id}" />
                                 </div>`;
                         },
                     },
@@ -278,12 +278,12 @@ var KTListDatatable = (function () {
             function (e) {
                 e.preventDefault();
 
-                const categoryName = $(this).attr("data-first-record-name");
-                const categoryId = $(this).attr("data-first-record-id");
+                const sourceName = $(this).attr("data-first-record-name");
+                const sourceId = $(this).attr("data-first-record-id");
 
                 // SweetAlert2 pop up
                 Swal.fire({
-                    text: "Yakin hendak menghapus data " + categoryName + "?",
+                    text: "Yakin hendak menghapus data " + sourceName + "?",
                     icon: "warning",
                     showCancelButton: true,
                     buttonsStyling: false,
@@ -297,10 +297,7 @@ var KTListDatatable = (function () {
                     if (result.value) {
                         // Delete via AJAX
                         $.ajax({
-                            url: route(
-                                "finance.categories.destroy",
-                                categoryId
-                            ),
+                            url: route("finance.sources.destroy", sourceId),
                             type: "DELETE",
                             headers: {
                                 "X-CSRF-TOKEN": $(
@@ -362,18 +359,18 @@ var KTListDatatable = (function () {
             function (e) {
                 e.preventDefault();
 
-                const categoryId = $(this).attr("data-first-record-id");
+                const sourceId = $(this).attr("data-first-record-id");
 
                 // Load data for editing
-                loadFirstRecordForEdit(categoryId);
+                loadFirstRecordForEdit(sourceId);
             }
         );
     };
 
     // Load data for editing
-    var loadFirstRecordForEdit = function (categoryId) {
+    var loadFirstRecordForEdit = function (sourceId) {
         $.ajax({
-            url: route("finance.categories.show", categoryId),
+            url: route("finance.sources.show", sourceId),
             type: "GET",
             headers: {
                 "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
@@ -395,14 +392,14 @@ var KTListDatatable = (function () {
                     );
 
                     // === Pastikan Select2 hanya diinisialisasi sekali dan nilainya terset ===
-                    const categorySelect = $(
-                        '#kt_modal_update_first_record_form select[name="category_type_id"]'
+                    const sourceSelect = $(
+                        '#kt_modal_update_first_record_form select[name="source_type_id"]'
                     );
 
                     // Inisialisasi atau refresh Select2
-                    if (!categorySelect.hasClass("select2-hidden-accessible")) {
+                    if (!sourceSelect.hasClass("select2-hidden-accessible")) {
                         // Jika belum pernah diinisialisasi
-                        categorySelect.select2({
+                        sourceSelect.select2({
                             dropdownParent: $("#kt_modal_update_first_record"),
                             width: "100%",
                             allowClear: true,
@@ -410,7 +407,7 @@ var KTListDatatable = (function () {
                         });
                     } else {
                         // Jika sudah pernah, reset dulu untuk hindari duplikasi dropdown
-                        categorySelect.select2("destroy").select2({
+                        sourceSelect.select2("destroy").select2({
                             dropdownParent: $("#kt_modal_update_first_record"),
                             width: "100%",
                             allowClear: true,
@@ -423,11 +420,11 @@ var KTListDatatable = (function () {
                         "shown.bs.modal",
                         function () {
                             // Set value meskipun nilainya sama
-                            categorySelect
-                                .val(firstRecord.category_type_id ?? "")
+                            sourceSelect
+                                .val(firstRecord.source_type_id ?? "")
                                 .trigger("change.select2");
                             // Trigger event agar HTML5 required mengenali perubahan
-                            categorySelect[0].dispatchEvent(
+                            sourceSelect[0].dispatchEvent(
                                 new Event("change", { bubbles: true })
                             );
                         }
@@ -575,7 +572,7 @@ var KTListDatatable = (function () {
                     if (result.value) {
                         // Delete selected datas via AJAX
                         $.ajax({
-                            url: route("finance.categories.destroy-multiple"),
+                            url: route("finance.sources.destroy-multiple"),
                             type: "DELETE",
                             data: {
                                 ids: selectedIds,
@@ -671,7 +668,7 @@ var KTListDatatable = (function () {
 })();
 
 // Modal Handlers
-var KTCategoriesModal = (function () {
+var KTFirstRecordModal = (function () {
     var submitAddButton;
 
     // Init add modal
@@ -715,7 +712,7 @@ var KTCategoriesModal = (function () {
             );
 
             $.ajax({
-                url: route("finance.categories.store"),
+                url: route("finance.sources.store"),
                 type: "POST",
                 data: formData,
                 processData: false,
@@ -913,7 +910,7 @@ var KTCategoriesModal = (function () {
                     return false;
                 }
 
-                const categoryId = $("#kt_modal_update_first_record").attr(
+                const sourceId = $("#kt_modal_update_first_record").attr(
                     "data-first-record-id"
                 );
                 const formData = new FormData(
@@ -925,12 +922,12 @@ var KTCategoriesModal = (function () {
                 this.disabled = true;
 
                 $.ajax({
-                    url: route("finance.categories.update", categoryId),
+                    url: route("finance.sources.update", sourceId),
                     type: "PUT",
                     data: {
                         name: formData.get("name"),
                         description: formData.get("description"),
-                        category_type_id: formData.get("category_type_id"),
+                        source_type_id: formData.get("source_type_id"),
                         user_id: formData.get("user_id"),
                         _token: $('meta[name="csrf-token"]').attr("content"),
                     },
@@ -1043,7 +1040,7 @@ var KTCategoriesModal = (function () {
 // On document ready
 KTUtil.onDOMContentLoaded(function () {
     KTListDatatable.init();
-    KTCategoriesModal.init();
+    KTFirstRecordModal.init();
 });
 
 // Alternative initialization if KTUtil is not available
@@ -1054,4 +1051,23 @@ $(document).ready(function () {
     if (typeof KTModal !== "undefined") {
         KTModal.init();
     }
+
+    // Jalankan saat modal ditampilkan
+    $("#kt_modal_add_first_record").on("shown.bs.modal", function () {
+        const sourceSelect = $(this).find('select[name="source_type_id"]');
+
+        // Cek apakah Select2 sudah diinisialisasi
+        if (sourceSelect.hasClass("select2-hidden-accessible")) {
+            // Hancurkan dulu biar gak dobel instance
+            sourceSelect.select2("destroy");
+        }
+
+        // Inisialisasi ulang Select2 dengan parent modal saat ini
+        sourceSelect.select2({
+            dropdownParent: $("#kt_modal_add_first_record"),
+            width: "100%",
+            allowClear: true,
+            placeholder: "Pilih sumber",
+        });
+    });
 });
