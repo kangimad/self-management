@@ -2,13 +2,18 @@
 
 namespace App\Repositories;
 
-use App\Models\FinanceCategory;
+use App\Models\Finance\FinanceCategory;
 
 class FinanceCategoryRepository
 {
     public function all()
     {
-        return FinanceCategory::orderBy('id', 'desc')->get();
+        return FinanceCategory::orderBy('name', 'desc')->get();
+    }
+
+    public function datatable()
+    {
+        return FinanceCategory::query()->with(['categoryType:id,name', 'user:id,name']);
     }
 
     public function find($id)
@@ -18,18 +23,42 @@ class FinanceCategoryRepository
 
     public function create(array $data)
     {
-        return FinanceCategory::create($data);
+        return FinanceCategory::create([
+            'name' => $data['name'],
+            'description' => $data['description'] ?? null,
+            'category_type_id' => $data['category_type_id'],
+            'user_id' => $data['user_id'],
+        ]);
     }
 
-    public function update($id, array $data)
+    public function update(FinanceCategory $result, array $data): bool
     {
-        $model = FinanceCategory::findOrFail($id);
-        $model->update($data);
-        return $model;
+        return $result->update([
+            'name' => $data['name'],
+            'description' => $data['description'] ?? null,
+            'category_type_id' => $data['category_type_id'],
+            'user_id' => $data['user_id'],
+        ]);
     }
 
-    public function delete($id)
+    public function delete(FinanceCategory $result): bool
     {
-        return FinanceCategory::destroy($id);
+        return $result->delete();
+    }
+
+    public function deleteMultiple(array $ids): bool
+    {
+        return FinanceCategory::whereIn('id', $ids)->delete();
+    }
+
+    public function existsByName(string $name, ?int $excludeId = null): bool
+    {
+        $query = FinanceCategory::where('name', $name);
+
+        if ($excludeId) {
+            $query->where('id', '!=', $excludeId);
+        }
+
+        return $query->exists();
     }
 }

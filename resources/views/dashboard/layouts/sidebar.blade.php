@@ -57,12 +57,33 @@
                         </div>
                         <!--end::Col-->
                     @endcan
+                    @can('finance-category-list')
+                        <!--begin::Col-->
+                        <div class="col-12">
+                            <!--begin::Link-->
+                            <a href="{{ route('finance.categories.index') }}"
+                                class="btn btn-icon btn-outline btn-bg-light {{ request()->routeIs('finance.categories.index') ? 'btn-light-primary' : '' }} btn-flex justify-content-start w-100 h-100 border-gray-200 p-3"
+                                data-kt-button="true">
+                                <!--begin::Icon-->
+                                <span class="me-2">
+                                    <i class="ki-outline ki-abstract-26 fs-1"></i>
+                                </span>
+                                <!--end::Icon-->
+
+                                <!--begin::Label-->
+                                <span class="fs-7 fw-bold">Category</span>
+                                <!--end::Label-->
+                            </a>
+                            <!--end::Link-->
+                        </div>
+                        <!--end::Col-->
+                    @endcan
                     @can('finance-category-type-list')
                         <!--begin::Col-->
                         <div class="col-12">
                             <!--begin::Link-->
                             <a href="{{ route('finance.category-types.index') }}"
-                                class="btn btn-icon btn-outline btn-bg-light {{ request()->routeIs('finance.category-types.index') ? 'btn-light-danger' : '' }} btn-flex justify-content-start w-100 h-100 border-gray-200 p-3"
+                                class="btn btn-icon btn-outline btn-bg-light {{ request()->routeIs('finance.category-types.index') ? 'btn-light-primary' : '' }} btn-flex justify-content-start w-100 h-100 border-gray-200 p-3"
                                 data-kt-button="true">
                                 <!--begin::Icon-->
                                 <span class="me-2">

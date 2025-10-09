@@ -1,14 +1,14 @@
 "use strict";
 
 // Class definition
-var KTCategoryTypesListDatatable = (function () {
+var KTListDatatable = (function () {
     // Shared variables
     var datatable;
     var table;
     var initialized = false;
 
     // Private functions
-    var initCategoryTypeTable = function () {
+    var initFirstRecordTable = function () {
         // console.log("Initializing DataTable...");
 
         // Check if route helper is available
@@ -35,15 +35,15 @@ var KTCategoryTypesListDatatable = (function () {
                     { orderable: true, targets: 2 }, // Enable ordering on column 2 (name)
                     { orderable: true, targets: 3 }, // Enable ordering on column 3 (categories)
                     { orderable: true, targets: 4 }, // Enable ordering on column 4 (created_at)
-                    { orderable: false, targets: 5 }, // Disable ordering on column 5 (actions)
+                    { orderable: false, targets: 6 }, // Disable ordering on column 6 (actions)
                     { searchable: false, targets: 0 }, // Disable searching on checkbox column
                     { searchable: false, targets: 1 }, // Disable searching on index column
-                    { searchable: false, targets: 5 }, // Disable searching on actions column
+                    { searchable: false, targets: 6 }, // Disable searching on actions column
                 ],
                 processing: true,
                 serverSide: true,
                 ajax: {
-                    url: route("finance.category-types.datatable"),
+                    url: route("finance.categories.datatable"),
                     type: "GET",
                     headers: {
                         "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
@@ -55,7 +55,7 @@ var KTCategoryTypesListDatatable = (function () {
                     data: function (d) {
                         // Add custom search parameter to the default DataTables search
                         const customSearch = $(
-                            '[data-kt-category-types-table-filter="search"]'
+                            '[data-kt-first-record-table-filter="search"]'
                         ).val();
                         if (customSearch) {
                             d.search.value = customSearch;
@@ -131,10 +131,19 @@ var KTCategoryTypesListDatatable = (function () {
                         },
                     },
                     {
-                        data: "categories",
+                        data: "firstRecord",
                         render: function (data, type, row) {
                             if (!data) {
-                                return '<span class="text-muted">Tidak ada kategori</span>';
+                                return '<span class="text-muted">Tidak ada tipe</span>';
+                            }
+                            return data;
+                        },
+                    },
+                    {
+                        data: "user",
+                        render: function (data, type, row) {
+                            if (!data) {
+                                return '<span class="text-muted">Tidak ada tipe</span>';
                             }
                             return data;
                         },
@@ -239,7 +248,7 @@ var KTCategoryTypesListDatatable = (function () {
     // Search Datatable
     var handleSearchDatatable = function () {
         const filterSearch = document.querySelector(
-            '[data-kt-category-types-table-filter="search"]'
+            '[data-kt-first-record-table-filter="search"]'
         );
 
         if (!filterSearch) {
@@ -265,19 +274,16 @@ var KTCategoryTypesListDatatable = (function () {
         // Handle Delete button click
         $(table).on(
             "click",
-            '[data-kt-category-types-table-filter="delete_row"]',
+            '[data-kt-first-record-table-filter="delete_row"]',
             function (e) {
                 e.preventDefault();
 
-                const categoryTypeName = $(this).attr(
-                    "data-category-type-name"
-                );
-                const categoryTypeId = $(this).attr("data-category-type-id");
+                const categoryName = $(this).attr("data-first-record-name");
+                const categoryId = $(this).attr("data-first-record-id");
 
                 // SweetAlert2 pop up
                 Swal.fire({
-                    text:
-                        "Yakin hendak menghapus data " + categoryTypeName + "?",
+                    text: "Yakin hendak menghapus data " + categoryName + "?",
                     icon: "warning",
                     showCancelButton: true,
                     buttonsStyling: false,
@@ -292,8 +298,8 @@ var KTCategoryTypesListDatatable = (function () {
                         // Delete via AJAX
                         $.ajax({
                             url: route(
-                                "finance.category-types.destroy",
-                                categoryTypeId
+                                "finance.categories.destroy",
+                                categoryId
                             ),
                             type: "DELETE",
                             headers: {
@@ -352,44 +358,83 @@ var KTCategoryTypesListDatatable = (function () {
         // Handle Edit button click
         $(table).on(
             "click",
-            '[data-kt-category-types-table-filter="edit_row"]',
+            '[data-kt-first-record-table-filter="edit_row"]',
             function (e) {
                 e.preventDefault();
 
-                const categoryTypeId = $(this).attr("data-category-type-id");
+                const categoryId = $(this).attr("data-first-record-id");
 
                 // Load data for editing
-                loadCategoryTypeForEdit(categoryTypeId);
+                loadFirstRecordForEdit(categoryId);
             }
         );
     };
 
     // Load data for editing
-    var loadCategoryTypeForEdit = function (categoryTypeId) {
+    var loadFirstRecordForEdit = function (categoryId) {
         $.ajax({
-            url: route("finance.category-types.show", categoryTypeId),
+            url: route("finance.categories.show", categoryId),
             type: "GET",
             headers: {
                 "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
             },
             success: function (response) {
                 if (response.success) {
-                    const categoryType = response.data;
+                    const firstRecord = response.data;
 
                     // Fill the update modal with data
                     $(
-                        '#kt_modal_update_category_type_form input[name="name"]'
-                    ).val(categoryType.name);
+                        '#kt_modal_update_first_record_form input[name="name"]'
+                    ).val(firstRecord.name);
                     $(
-                        '#kt_modal_update_category_type_form textarea[name="description"]'
-                    ).val(categoryType.description);
-                    $("#kt_modal_update_category_type").attr(
-                        "data-category-type-id",
-                        categoryType.id
+                        '#kt_modal_update_first_record_form textarea[name="description"]'
+                    ).val(firstRecord.description);
+                    $("#kt_modal_update_first_record").attr(
+                        "data-first-record-id",
+                        firstRecord.id
                     );
 
-                    // Show the update modal
-                    $("#kt_modal_update_category_type").modal("show");
+                    // === Pastikan Select2 hanya diinisialisasi sekali dan nilainya terset ===
+                    const categorySelect = $(
+                        '#kt_modal_update_first_record_form select[name="category_type_id"]'
+                    );
+
+                    // Inisialisasi atau refresh Select2
+                    if (!categorySelect.hasClass("select2-hidden-accessible")) {
+                        // Jika belum pernah diinisialisasi
+                        categorySelect.select2({
+                            dropdownParent: $("#kt_modal_update_first_record"),
+                            width: "100%",
+                            allowClear: true,
+                            placeholder: "Select an option",
+                        });
+                    } else {
+                        // Jika sudah pernah, reset dulu untuk hindari duplikasi dropdown
+                        categorySelect.select2("destroy").select2({
+                            dropdownParent: $("#kt_modal_update_first_record"),
+                            width: "100%",
+                            allowClear: true,
+                            placeholder: "Select an option",
+                        });
+                    }
+
+                    // Tunggu modal selesai ditampilkan, baru set value Select2
+                    $("#kt_modal_update_first_record").one(
+                        "shown.bs.modal",
+                        function () {
+                            // Set value meskipun nilainya sama
+                            categorySelect
+                                .val(firstRecord.category_type_id ?? "")
+                                .trigger("change.select2");
+                            // Trigger event agar HTML5 required mengenali perubahan
+                            categorySelect[0].dispatchEvent(
+                                new Event("change", { bubbles: true })
+                            );
+                        }
+                    );
+
+                    // Show modal (ini memicu event di atas)
+                    $("#kt_modal_update_first_record").modal("show");
                 } else {
                     Swal.fire({
                         text: response.message,
@@ -477,13 +522,13 @@ var KTCategoryTypesListDatatable = (function () {
         const selectedCount = selectedCheckboxes.length;
 
         const toolbarBase = document.querySelector(
-            '[data-kt-category-type-table-toolbar="base"]'
+            '[data-kt-first-record-table-toolbar="base"]'
         );
         const toolbarSelected = document.querySelector(
-            '[data-kt-category-type-table-toolbar="selected"]'
+            '[data-kt-first-record-table-toolbar="selected"]'
         );
         const selectedCountElement = document.querySelector(
-            '[data-kt-category-type-table-select="selected_count"]'
+            '[data-kt-first-record-table-select="selected_count"]'
         );
 
         if (selectedCount > 0) {
@@ -499,7 +544,7 @@ var KTCategoryTypesListDatatable = (function () {
     // Handle bulk delete
     var handleBulkDelete = function () {
         const deleteSelectedButton = document.querySelector(
-            '[data-kt-category-type-table-select="delete_selected"]'
+            '[data-kt-first-record-table-select="delete_selected"]'
         );
 
         if (deleteSelectedButton) {
@@ -530,9 +575,7 @@ var KTCategoryTypesListDatatable = (function () {
                     if (result.value) {
                         // Delete selected datas via AJAX
                         $.ajax({
-                            url: route(
-                                "finance.category-types.destroy-multiple"
-                            ),
+                            url: route("finance.categories.destroy-multiple"),
                             type: "DELETE",
                             data: {
                                 ids: selectedIds,
@@ -599,14 +642,14 @@ var KTCategoryTypesListDatatable = (function () {
                 return;
             }
 
-            table = document.querySelector("#kt_category_types_table");
+            table = document.querySelector("#kt_first_record_table");
 
             if (!table) {
-                console.error("Table #kt_category_types_table not found");
+                console.error("Table #kt_first_record_table not found");
                 return;
             }
 
-            initCategoryTypeTable();
+            initFirstRecordTable();
             handleSearchDatatable();
             handleBulkDelete();
 
@@ -628,14 +671,14 @@ var KTCategoryTypesListDatatable = (function () {
 })();
 
 // Modal Handlers
-var KTCategoryTypesModal = (function () {
+var KTCategoriesModal = (function () {
     var submitAddButton;
 
     // Init add modal
-    var initAddCategoryType = function () {
+    var initAddFirstRecord = function () {
         // Submit button handler
         submitAddButton = document.querySelector(
-            "#kt_modal_add_category_type_submit"
+            "#kt_modal_add_first_record_submit"
         );
         submitAddButton.addEventListener("click", function (e) {
             e.preventDefault();
@@ -647,7 +690,7 @@ var KTCategoryTypesModal = (function () {
 
             // Simple client-side validation
             const nameInput = document.querySelector(
-                '#kt_modal_add_category_type_form input[name="name"]'
+                '#kt_modal_add_first_record_form input[name="name"]'
             );
             if (!nameInput.value.trim()) {
                 Swal.fire({
@@ -668,11 +711,11 @@ var KTCategoryTypesModal = (function () {
 
             // Submit form data
             const formData = new FormData(
-                document.getElementById("kt_modal_add_category_type_form")
+                document.getElementById("kt_modal_add_first_record_form")
             );
 
             $.ajax({
-                url: route("finance.category-types.store"),
+                url: route("finance.categories.store"),
                 type: "POST",
                 data: formData,
                 processData: false,
@@ -699,18 +742,18 @@ var KTCategoryTypesModal = (function () {
                             },
                         }).then(function () {
                             // Hide modal
-                            $("#kt_modal_add_category_type").modal("hide");
+                            $("#kt_modal_add_first_record").modal("hide");
 
                             // Reset form
                             document
                                 .getElementById(
-                                    "kt_modal_add_category_type_form"
+                                    "kt_modal_add_first_record_form"
                                 )
                                 .reset();
                             clearFormErrors();
 
                             // Reload datatable
-                            KTCategoryTypesListDatatable.refresh();
+                            KTListDatatable.refresh();
                         });
                     } else {
                         // Hide loading indication
@@ -739,7 +782,7 @@ var KTCategoryTypesModal = (function () {
                         // Display field-specific errors
                         Object.keys(response.errors).forEach(function (field) {
                             const input = document.querySelector(
-                                `#kt_modal_add_category_type_form input[name="${field}"]`
+                                `#kt_modal_add_first_record_form input[name="${field}"]`
                             );
                             const errorContainer = input
                                 ? input.parentNode.querySelector(
@@ -788,7 +831,7 @@ var KTCategoryTypesModal = (function () {
         // Function to clear form errors
         var clearFormErrors = function () {
             const form = document.getElementById(
-                "kt_modal_add_category_type_form"
+                "kt_modal_add_first_record_form"
             );
             const inputs = form.querySelectorAll("input, textarea");
             const errorContainers = form.querySelectorAll(".invalid-feedback");
@@ -805,7 +848,7 @@ var KTCategoryTypesModal = (function () {
 
         // Cancel button handler
         document
-            .querySelector("#kt_modal_add_category_type_cancel")
+            .querySelector("#kt_modal_add_first_record_cancel")
             .addEventListener("click", function (e) {
                 e.preventDefault();
 
@@ -822,9 +865,9 @@ var KTCategoryTypesModal = (function () {
                     },
                 }).then(function (result) {
                     if (result.value) {
-                        $("#kt_modal_add_category_type").modal("hide");
+                        $("#kt_modal_add_first_record").modal("hide");
                         document
-                            .getElementById("kt_modal_add_category_type_form")
+                            .getElementById("kt_modal_add_first_record_form")
                             .reset();
                         clearFormErrors();
                     }
@@ -833,21 +876,19 @@ var KTCategoryTypesModal = (function () {
 
         // Close button handler
         document
-            .querySelector("#kt_modal_add_category_type_close")
+            .querySelector("#kt_modal_add_first_record_close")
             .addEventListener("click", function (e) {
                 e.preventDefault();
-                $("#kt_modal_add_category_type").modal("hide");
+                $("#kt_modal_add_first_record").modal("hide");
                 document
-                    .getElementById("kt_modal_add_category_type_form")
+                    .getElementById("kt_modal_add_first_record_form")
                     .reset();
                 clearFormErrors();
             });
 
         // Clear error when user starts typing
         document
-            .querySelector(
-                '#kt_modal_add_category_type_form input[name="name"]'
-            )
+            .querySelector('#kt_modal_add_first_record_form input[name="name"]')
             .addEventListener("input", function () {
                 this.classList.remove("is-invalid");
                 const errorContainer =
@@ -860,10 +901,10 @@ var KTCategoryTypesModal = (function () {
     };
 
     // Init update modal
-    var initUpdateCategoryType = function () {
+    var initUpdateFirstRecord = function () {
         // Submit button handler
         document
-            .querySelector("#kt_modal_update_category_type_submit")
+            .querySelector("#kt_modal_update_first_record_submit")
             .addEventListener("click", function (e) {
                 e.preventDefault();
 
@@ -872,13 +913,11 @@ var KTCategoryTypesModal = (function () {
                     return false;
                 }
 
-                const categoryTypeId = $("#kt_modal_update_category_type").attr(
-                    "data-category-type-id"
+                const categoryId = $("#kt_modal_update_first_record").attr(
+                    "data-first-record-id"
                 );
                 const formData = new FormData(
-                    document.getElementById(
-                        "kt_modal_update_category_type_form"
-                    )
+                    document.getElementById("kt_modal_update_first_record_form")
                 );
 
                 // Show loading indication
@@ -886,11 +925,13 @@ var KTCategoryTypesModal = (function () {
                 this.disabled = true;
 
                 $.ajax({
-                    url: route("finance.category-types.update", categoryTypeId),
+                    url: route("finance.categories.update", categoryId),
                     type: "PUT",
                     data: {
                         name: formData.get("name"),
                         description: formData.get("description"),
+                        category_type_id: formData.get("category_type_id"),
+                        user_id: formData.get("user_id"),
                         _token: $('meta[name="csrf-token"]').attr("content"),
                     },
                     headers: {
@@ -902,11 +943,11 @@ var KTCategoryTypesModal = (function () {
                         // Hide loading indication
                         document
                             .querySelector(
-                                "#kt_modal_update_category_type_submit"
+                                "#kt_modal_update_first_record_submit"
                             )
                             .removeAttribute("data-kt-indicator");
                         document.querySelector(
-                            "#kt_modal_update_category_type_submit"
+                            "#kt_modal_update_first_record_submit"
                         ).disabled = false;
 
                         if (response.success) {
@@ -920,12 +961,12 @@ var KTCategoryTypesModal = (function () {
                                 },
                             }).then(function () {
                                 // Hide modal
-                                $("#kt_modal_update_category_type").modal(
+                                $("#kt_modal_update_first_record").modal(
                                     "hide"
                                 );
 
                                 // Reload datatable
-                                KTCategoryTypesListDatatable.refresh();
+                                KTListDatatable.refresh();
                             });
                         } else {
                             Swal.fire({
@@ -943,11 +984,11 @@ var KTCategoryTypesModal = (function () {
                         // Hide loading indication
                         document
                             .querySelector(
-                                "#kt_modal_update_category_type_submit"
+                                "#kt_modal_update_first_record_submit"
                             )
                             .removeAttribute("data-kt-indicator");
                         document.querySelector(
-                            "#kt_modal_update_category_type_submit"
+                            "#kt_modal_update_first_record_submit"
                         ).disabled = false;
 
                         const response = xhr.responseJSON;
@@ -976,41 +1017,41 @@ var KTCategoryTypesModal = (function () {
 
         // Cancel button handler
         document
-            .querySelector("#kt_modal_update_category_type_cancel")
+            .querySelector("#kt_modal_update_first_record_cancel")
             .addEventListener("click", function (e) {
                 e.preventDefault();
-                $("#kt_modal_update_category_type").modal("hide");
+                $("#kt_modal_update_first_record").modal("hide");
             });
 
         // Close button handler
         document
-            .querySelector("#kt_modal_update_category_type_close")
+            .querySelector("#kt_modal_update_first_record_close")
             .addEventListener("click", function (e) {
                 e.preventDefault();
-                $("#kt_modal_update_category_type").modal("hide");
+                $("#kt_modal_update_first_record").modal("hide");
             });
     };
 
     return {
         init: function () {
-            initAddCategoryType();
-            initUpdateCategoryType();
+            initAddFirstRecord();
+            initUpdateFirstRecord();
         },
     };
 })();
 
 // On document ready
 KTUtil.onDOMContentLoaded(function () {
-    KTCategoryTypesListDatatable.init();
-    KTCategoryTypesModal.init();
+    KTListDatatable.init();
+    KTCategoriesModal.init();
 });
 
 // Alternative initialization if KTUtil is not available
 $(document).ready(function () {
-    if (typeof KTCategoryTypesListDatatable !== "undefined") {
-        KTCategoryTypesListDatatable.init();
+    if (typeof KTListDatatable !== "undefined") {
+        KTListDatatable.init();
     }
-    if (typeof KTCategoryTypesModal !== "undefined") {
-        KTCategoryTypesModal.init();
+    if (typeof KTModal !== "undefined") {
+        KTModal.init();
     }
 });

@@ -44,24 +44,28 @@ Route::middleware(['auth', 'verified'])->prefix('finance')->name('finance.')->gr
         Route::delete('/transactions/{transaction}', [\App\Http\Controllers\Finance\FinanceTransactionController::class, 'destroy'])->name('transactions.destroy');
     });
 
-    // Category routes
-    Route::middleware('permission:finance-category-list')->group(function () {
-        Route::get('/categories', [\App\Http\Controllers\Finance\FinanceCategoryController::class, 'index'])->name('categories.index');
-        Route::get('/categories/{category}', [\App\Http\Controllers\Finance\FinanceCategoryController::class, 'show'])->name('categories.show');
-    });
+    // Categories routes
+    Route::prefix('categories')->name('categories.')->group(function () {
+        Route::middleware('permission:finance-category-list')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Finance\FinanceCategoryController::class, 'index'])->name('index');
+            Route::get('/datatable', [\App\Http\Controllers\Finance\FinanceCategoryController::class, 'datatable'])->name('datatable');
+            Route::get('/{result}', [\App\Http\Controllers\Finance\FinanceCategoryController::class, 'show'])->name('show');
+        });
 
-    Route::middleware('permission:finance-category-create')->group(function () {
-        Route::get('/categories/create', [\App\Http\Controllers\Finance\FinanceCategoryController::class, 'create'])->name('categories.create');
-        Route::post('/categories', [\App\Http\Controllers\Finance\FinanceCategoryController::class, 'store'])->name('categories.store');
-    });
+        Route::middleware('permission:finance-category-create')->group(function () {
+            Route::get('/create', [\App\Http\Controllers\Finance\FinanceCategoryController::class, 'create'])->name('create');
+            Route::post('/', [\App\Http\Controllers\Finance\FinanceCategoryController::class, 'store'])->name('store');
+        });
 
-    Route::middleware('permission:finance-category-edit')->group(function () {
-        Route::get('/categories/{category}/edit', [\App\Http\Controllers\Finance\FinanceCategoryController::class, 'edit'])->name('categories.edit');
-        Route::patch('/categories/{category}', [\App\Http\Controllers\Finance\FinanceCategoryController::class, 'update'])->name('categories.update');
-    });
+        Route::middleware('permission:finance-category-edit')->group(function () {
+            Route::get('/{result}/edit', [\App\Http\Controllers\Finance\FinanceCategoryController::class, 'edit'])->name('edit');
+            Route::put('/{result}', [\App\Http\Controllers\Finance\FinanceCategoryController::class, 'update'])->name('update');
+        });
 
-    Route::middleware('permission:finance-category-delete')->group(function () {
-        Route::delete('/categories/{category}', [\App\Http\Controllers\Finance\FinanceCategoryController::class, 'destroy'])->name('categories.destroy');
+        Route::middleware('permission:finance-category-delete')->group(function () {
+            Route::delete('/{result}', [\App\Http\Controllers\Finance\FinanceCategoryController::class, 'destroy'])->name('destroy');
+            Route::delete('/', [\App\Http\Controllers\Finance\FinanceCategoryController::class, 'destroyMultiple'])->name('destroy-multiple');
+        });
     });
 
     // Category Type routes
