@@ -13,10 +13,13 @@ return new class extends Migration
     {
         Schema::create('finance_balances', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('source_id')->constrained('finance_sources')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('user_id')->nullable()->constrained('users')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId('source_id')->nullable()->constrained('finance_sources')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId('transaction_id')->nullable()->constrained('finance_transactions')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->decimal('previous_balance', 15, 2)->default(0);
+            $table->decimal('change_amount', 15, 2)->default(0);
             $table->decimal('current_balance', 15, 2)->default(0);
             $table->text('description')->nullable();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
         });
     }

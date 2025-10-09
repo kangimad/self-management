@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('finance_categories', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('category_type_id')->nullable()->constrained('finance_category_types')->onDelete('cascade')->onUpdate('cascade');
             $table->string('name')->nullable();
-            $table->foreignId('category_type_id')->constrained('finance_category_types')->onDelete('cascade')->onUpdate('cascade')->nullable();
             $table->text('description')->nullable();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade')->onUpdate('cascade')->nullable();
             $table->timestamps();
         });
     }

@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('finance_transaction_types', function (Blueprint $table) {
             $table->id();
             $table->string('name')->nullable();
+            $table->string('code')->nullable();
+            $table->enum('direction', ['in', 'out','neutral'])->nullable();
             $table->text('description')->nullable();
             $table->timestamps();
         });

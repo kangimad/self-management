@@ -13,13 +13,14 @@ return new class extends Migration
     {
         Schema::create('finance_transactions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('transaction_type_id')->constrained('finance_transaction_types')->onDelete('cascade')->onUpdate('cascade')->nullable();
-            $table->foreignId('category_id')->constrained('finance_categories')->onDelete('cascade')->onUpdate('cascade')->nullable();
-            $table->foreignId('source_id')->constrained('finance_sources')->onDelete('cascade')->onUpdate('cascade')->nullable();
+            $table->foreignId('user_id')->nullable()->constrained('users')->nullable()->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('transaction_type_id')->nullable()->constrained('finance_transaction_types')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('source_id')->nullable()->constrained('finance_sources')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('target_source_id')->nullable()->constrained('finance_sources')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('category_id')->nullable()->constrained('finance_categories')->onDelete('cascade')->onUpdate('cascade');
             $table->decimal('amount', 15, 2)->nullable();
             $table->date('date')->nullable();
             $table->text('description')->nullable();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade')->onUpdate('cascade')->nullable();
             $table->timestamps();
         });
     }

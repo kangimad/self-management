@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('finance_allocations', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade')->onUpdate('cascade');
             $table->enum('allocation_type', ['source', 'category'])->nullable();
-            $table->foreignId('source_id')->constrained('finance_sources')->onDelete('cascade')->onUpdate('cascade')->nullable();
-            $table->foreignId('category_id')->constrained('finance_categories')->onDelete('cascade')->onUpdate('cascade')->nullable();
+            $table->foreignId('source_id')->nullable()->constrained('finance_sources')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('category_id')->nullable()->constrained('finance_categories')->onDelete('cascade')->onUpdate('cascade');
             $table->decimal('percentage', 5, 2)->nullable();
-            $table->foreignId('target_category_id')->constrained('finance_categories')->onDelete('cascade')->onUpdate('cascade')->nullable();
-            $table->foreignId('target_source_id')->constrained('finance_sources')->onDelete('cascade')->onUpdate('cascade')->nullable();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade')->onUpdate('cascade')->nullable();
+            $table->foreignId('target_source_id')->nullable()->constrained('finance_sources')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('target_category_id')->nullable()->constrained('finance_categories')->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
         });
     }

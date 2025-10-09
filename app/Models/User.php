@@ -10,14 +10,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasRoles;
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'name',
         'email',
@@ -29,22 +22,11 @@ class User extends Authenticatable
         'is_online',
         'last_activity_at',
     ];
-
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
@@ -164,5 +146,129 @@ class User extends Authenticatable
         }
 
         return substr($initials, 0, 2);
+    }
+
+    /**
+     * FINANCE RELATIONSHIPS
+     */
+
+    /**
+     * User's finance sources (wallets, banks, etc.)
+     */
+    public function financeSources()
+    {
+        return $this->hasMany(\App\Models\Finance\FinanceSource::class);
+    }
+
+    /**
+     * User's finance categories (income, expense categories)
+     */
+    public function financeCategories()
+    {
+        return $this->hasMany(\App\Models\Finance\FinanceCategory::class);
+    }
+
+    /**
+     * User's finance transactions
+     */
+    public function financeTransactions()
+    {
+        return $this->hasMany(\App\Models\Finance\FinanceTransaction::class);
+    }
+
+    /**
+     * User's finance allocations (budget allocations)
+     */
+    public function financeAllocations()
+    {
+        return $this->hasMany(\App\Models\Finance\FinanceAllocation::class);
+    }
+
+    /**
+     * User's finance balances
+     */
+    public function financeBalances()
+    {
+        return $this->hasMany(\App\Models\Finance\FinanceBalance::class);
+    }
+
+    /**
+     * Get user's total balance across all sources
+     */
+    public function getTotalBalanceAttribute(): float
+    {
+        return $this->financeBalances()
+            ->join('finance_sources', 'finance_balances.finance_source_id', '=', 'finance_sources.id')
+            ->where('finance_sources.user_id', $this->id)
+            ->sum('finance_balances.amount');
+    }
+
+    /**
+     * Get user's income transactions
+     */
+    public function incomeTransactions()
+    {
+        return $this->financeTransactions()
+            ->whereHas('financeTransactionType', function ($query) {
+                $query->where('name', 'Income');
+            });
+    }
+
+    /**
+     * Get user's expense transactions
+     */
+    public function expenseTransactions()
+    {
+        return $this->financeTransactions()
+            ->whereHas('financeTransactionType', function ($query) {
+                $query->where('name', 'Expense');
+            });
+    }
+
+    /**
+     * Get user's transfer transactions
+     */
+    public function transferTransactions()
+    {
+        return $this->financeTransactions()
+            ->whereHas('financeTransactionType', function ($query) {
+                $query->where('name', 'Transfer');
+            });
+    }
+
+    /**
+     * Get user's monthly income
+     */
+    public function getMonthlyIncome($month = null, $year = null): float
+    {
+        $month = $month ?? now()->month;
+        $year = $year ?? now()->year;
+
+        return $this->incomeTransactions()
+            ->whereMonth('created_at', $month)
+            ->whereYear('created_at', $year)
+            ->sum('amount');
+    }
+
+    /**
+     * Get user's monthly expense
+     */
+    public function getMonthlyExpense($month = null, $year = null): float
+    {
+        $month = $month ?? now()->month;
+        $year = $year ?? now()->year;
+
+        return $this->expenseTransactions()
+            ->whereMonth('created_at', $month)
+            ->whereYear('created_at', $year)
+            ->sum('amount');
+    }
+
+    /**
+     * Get user's net worth (total balance)
+     */
+    public function getNetWorthAttribute(): float
+    {
+        return $this->total_balance;
     }
 }
